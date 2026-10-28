@@ -1,0 +1,138 @@
+================================================================
+        BankQ — Bank Queue Management System
+        Project Overview
+================================================================
+
+WHAT IS IT?
+-----------
+BankQ is a digital bank queue management system built as a
+mini project. It lets customers book time slots online, check
+in at a kiosk using a 4-digit PIN, and get served by a teller
+— all tracked in real time.
+
+----------------------------------------------------------------
+
+TECH STACK
+----------
+
+BACKEND
+  - Python 3.13
+  - FastAPI          → web framework, REST API
+  - SQLAlchemy       → ORM (database models)
+  - PyMySQL          → MySQL database driver
+  - Pydantic v2      → request/response validation
+  - PyJWT            → JSON Web Token auth
+  - Passlib + bcrypt → password hashing
+  - Uvicorn          → ASGI server to run FastAPI
+  - WebSockets       → real-time live queue updates
+
+FRONTEND
+  - React 18         → UI framework
+  - Vite             → build tool / dev server
+  - Tailwind CSS     → styling
+  - Axios            → HTTP requests to backend
+  - React Router v6  → page navigation
+  - Lucide React     → icons
+
+DATABASE
+  - MySQL 8.0        → relational database
+  - 5 tables: users, branches, services, counters, appointments
+
+----------------------------------------------------------------
+
+PROJECT STRUCTURE
+-----------------
+
+BankQ/
+├── main.py          → all API routes (book, kiosk, teller, ws)
+├── auth.py          → register, login, JWT, role guards
+├── models.py        → SQLAlchemy DB models
+├── database.py      → MySQL connection
+├── seed.py          → inserts demo data into DB
+├── migrate.py       → DB column migration helper
+├── requirements.txt → Python dependencies
+└── frontend/
+    └── src/
+        ├── pages/
+        │   ├── Auth.jsx            → login & register
+        │   ├── BookSlot.jsx        → customer books a slot
+        │   ├── MyAppointments.jsx  → customer booking history
+        │   ├── KioskScanner.jsx    → security PIN check-in
+        │   ├── TellerDashboard.jsx → teller calls & completes
+        │   └── LiveTracker.jsx     → real-time queue feed
+        ├── components/
+        │   └── Navbar.jsx          → top navigation bar
+        └── context/
+            └── AuthContext.jsx     → global auth state
+
+----------------------------------------------------------------
+
+USER ROLES
+----------
+  CUSTOMER  → book slots, view bookings, track queue
+  SECURITY  → kiosk check-in using PIN
+  TELLER    → call next token, mark complete
+  ADMIN     → access to all pages
+
+----------------------------------------------------------------
+
+APPOINTMENT FLOW
+----------------
+  1. Customer logs in and books a slot
+       → gets Token (e.g. C-101) + 4-digit PIN (e.g. 4821)
+
+  2. Customer arrives at bank, enters PIN at Kiosk
+       → status: BOOKED → CHECKED_IN
+
+  3. Teller clicks "Call Next Token"
+       → status: CHECKED_IN → IN_PROGRESS
+
+  4. Teller clicks "Mark Complete"
+       → status: IN_PROGRESS → COMPLETED
+
+  5. Live Tracker shows all events in real time via WebSocket
+
+----------------------------------------------------------------
+
+API ENDPOINTS
+-------------
+  POST  /auth/register         → create account
+  POST  /auth/login            → get JWT token
+  GET   /branches              → list all branches
+  GET   /services              → list all services
+  GET   /counters?branch_id=   → list counters for branch
+  POST  /appointments/book     → book a slot
+  GET   /appointments/my       → my booking history
+  POST  /kiosk/verify          → check in via PIN
+  POST  /teller/call-next      → call next customer
+  POST  /teller/complete       → mark token complete
+  WS    /ws/queue/{branch_id}  → live queue WebSocket
+
+----------------------------------------------------------------
+
+DEMO CREDENTIALS (all passwords: pass123)
+------------------------------------------
+  Customer  →  9876543210
+  Teller    →  9000000002
+  Security  →  9000000004
+  Admin     →  9000000001
+
+----------------------------------------------------------------
+
+HOW TO RUN
+----------
+  Backend:
+    cd "d:\Q Ease Banking"
+    pip install -r requirements.txt
+    python migrate.py
+    python seed.py
+    uvicorn main:app --host 0.0.0.0 --port 9000 --reload
+
+  Frontend:
+    cd "d:\Q Ease Banking\frontend"
+    npm install
+    npm run dev
+
+  Open: http://localhost:5173
+
+================================================================

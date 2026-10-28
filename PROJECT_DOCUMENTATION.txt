@@ -1,0 +1,1029 @@
+D.K.T.E. SOCIETY'S TEXTILE AND ENGINEERING INSTITUTE, ICHALKARANJI
+(An Empowered Autonomous Institute, Affiliated to Shivaji University, Kolhapur)
+DEPARTMENT OF MCA
+
+A PROJECT REPORT ENTITLED
+
+BankQ - Bank Queue Management System with AI Chatbot
+
+SUBMITTED IN PARTIAL FULFILLMENT OF THE REQUIREMENTS FOR THE
+DEGREE OF MASTER OF COMPUTER APPLICATION
+
+BY
+Mr. Faiz Jamadar (25PMC028)
+Mr. Aman Rashid Gavandi (25PMC029)
+
+UNDER THE GUIDANCE OF
+Prof. Pratiksha
+
+THROUGH THE DIRECTOR
+D.K.T.E. S's TEXTILE AND ENGINEERING INSTITUTE,
+ICHALKARANJI - 416115
+
+ACADEMIC YEAR: 2026-2027
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 1
+
+================================================================================
+CERTIFICATE
+================================================================================
+
+This is to certify that the project report entitled "BankQ - Bank Queue Management System with AI Chatbot" is a record of the project work carried out by Mr. Faiz Jamadar and Mr. Aman Rashid Gavandi in partial fulfillment of the requirements for the degree of Master of Computer Application, Semester III, at D.K.T.E. Society's Textile and Engineering Institute, Ichalkaranji.
+
+The project work was carried out under the guidance of Prof. Pratiksha and is submitted in accordance with the academic requirements of the institute for the academic year 2026-2027.
+
+Project Guide                                Head of the Department
+Name: Prof. Pratiksha                        Name: Dr. Ghat
+Signature: ______________________            Signature: ______________________
+Date: ___________________________            Date: ___________________________
+
+Examiner 1: __________________________       Examiner 2: __________________________
+Place: Ichalkaranji
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 2
+
+================================================================================
+GUIDE'S CERTIFICATE
+================================================================================
+
+I hereby certify that the project entitled "BankQ - Bank Queue Management System with AI Chatbot" has been developed by Mr. Faiz Jamadar (25PMC028) and Mr. Aman Rashid Gavandi (25PMC029) under my guidance.
+
+The students have undertaken the project work, studied the relevant concepts of Generative Artificial Intelligence, implemented the proposed solution, and prepared the accompanying documentation.
+
+The work has been reviewed by me and is submitted for academic evaluation.
+
+Project Guide
+Name: Prof. Pratiksha
+Designation: Professor, Department of MCA
+Signature: _______________________________________
+Date: ____________________________________________
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 3
+
+================================================================================
+STUDENT DECLARATION
+================================================================================
+
+To,
+The Registrar,
+Shivaji University, Kolhapur.
+
+We, the undersigned, hereby declare that the project report entitled "BankQ - Bank Queue Management System with AI Chatbot", submitted under the guidance of Prof. Pratiksha is our original work carried out as part of the Master of Computer Application programme at D.K.T.E. Society's Textile and Engineering Institute, Ichalkaranji.
+
+We further declare that the empirical findings and results presented in this report are based on the work and information collected by us. We have not copied this report from another report submitted to Shivaji University, Kolhapur. All external sources, software libraries, datasets, APIs, and Generative AI tools used have been acknowledged.
+
+1. The project has been developed by us under the guidance of the assigned project guide.
+2. The information, results, screenshots, and observations presented in this report are accurate to the best of our knowledge.
+3. All external sources, research papers, software libraries, datasets, APIs, and AI tools used in the project have been appropriately acknowledged.
+4. The use of Generative AI tools, including AI-generated code, content, or other outputs, has been disclosed wherever applicable.
+5. We have not knowingly presented another person's work as our own.
+6. This project has not been submitted elsewhere for academic evaluation unless explicitly permitted by the institute.
+
+Student Name(s): Faiz Jamadar, Aman Rashid Gavandi
+Roll Number(s): 25PMC028, 25PMC029
+Signature(s): _____________________________________________
+Date: ____________________________________________________
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 4
+
+================================================================================
+ACKNOWLEDGEMENT
+================================================================================
+
+We have been fortunate to receive assistance, suggestions, and support from our project guide, faculty members, friends, and the institute during the development of our project entitled "BankQ - Bank Queue Management System with AI Chatbot".
+
+First and foremost, we express our sincere gratitude to our respected project guide, Prof. Pratiksha, for valuable guidance, constructive suggestions, and kind support throughout the project work.
+
+We take this opportunity to thank the Head of the Department, Dr. Ghat, all teaching and non-teaching staff members, and our friends for their cooperation and encouragement.
+
+We also sincerely thank the staff of the computer laboratory for their cooperation and for providing the facilities required to complete the project within the available time.
+
+We acknowledge the developers and providers of software tools, Generative AI models, libraries, APIs, and technical resources used in the project, including Groq AI, FastAPI, React, and MySQL.
+
+Mr. Faiz Jamadar
+Mr. Aman Rashid Gavandi
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 5
+
+================================================================================
+ABSTRACT
+================================================================================
+
+This project focuses on the development of BankQ, a Bank Queue Management System integrated with a Generative AI-powered chatbot, using modern web technologies and Generative Artificial Intelligence.
+
+The existing approach to bank queue management faces challenges such as long physical waiting times, lack of real-time queue visibility, no prior appointment scheduling, and absence of intelligent customer assistance. To address these issues, the proposed system uses the Groq AI API (LLM-based) to provide an intelligent conversational assistant that answers customer queries related to banking services and queue management.
+
+The application is developed using FastAPI (Python) for the backend, React with Vite and Tailwind CSS for the frontend, and MySQL as the database. The Generative AI component is used for natural language question answering, allowing customers to interact with a floating AI chatbot for instant assistance.
+
+The system provides features such as online slot booking, 4-digit PIN-based kiosk check-in, real-time queue tracking via WebSockets, teller dashboard for queue management, appointment history, and an AI chatbot assistant powered by Groq AI. The project is evaluated through functional testing and AI output evaluation.
+
+The proposed application aims to improve customer experience, reduce physical waiting time, and provide intelligent assistance at bank branches. The project also identifies limitations and opportunities for future enhancement such as mobile app support and multilingual chatbot responses.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 6
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+Sr. No.   Contents                                          Page No.
+1         Chapter 1: Introduction                           11
+2         Chapter 2: Existing System and Problem Analysis   12
+3         Chapter 3: Proposed System                        13
+4         Chapter 4: Generative AI Components Used          15
+5         Chapter 5: System Analysis and Design             17
+6         Chapter 6: Hardware and Software Requirements     18
+7         Chapter 7: Implementation                         19
+8         Chapter 8: Testing and Results                    20
+9         Chapter 9: Scope, Limitations and Future Enhancements 21
+10        Chapter 10: Conclusion                            22
+11        Bibliography / References                         23
+12        Appendices                                        24
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 7
+
+================================================================================
+LIST OF FIGURES
+================================================================================
+
+Figure No.   Figure Title                        Page No.
+Fig. 5.1     System Architecture Diagram         17
+Fig. 5.2     Use Case Diagram                    17
+Fig. 5.3     Data Flow Diagram                   17
+Fig. 7.1     Login / Register Screen             19
+Fig. 7.2     Book Slot Screen                    19
+Fig. 7.3     Booking Confirmation with PIN        19
+Fig. 7.4     My Appointments Screen              19
+Fig. 7.5     Kiosk Scanner Screen                19
+Fig. 7.6     Live Tracker Screen                 19
+Fig. 7.7     Teller Dashboard Screen             19
+Fig. 7.8     AI Chatbot Screen                   19
+Fig. 8.1     Testing Results                     20
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 8
+
+================================================================================
+LIST OF TABLES
+================================================================================
+
+Table No.    Table Title                          Page No.
+Table 2.1    Existing System Analysis             12
+Table 3.1    Proposed System Features             13
+Table 4.1    Generative AI Components             15
+Table 6.1    Hardware Requirements                18
+Table 6.2    Software Requirements                18
+Table 8.1    Test Cases and Results               20
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 9
+
+================================================================================
+ABBREVIATIONS AND TERMINOLOGY
+================================================================================
+
+Abbreviation    Full Form / Meaning
+AI              Artificial Intelligence
+GenAI           Generative Artificial Intelligence
+LLM             Large Language Model
+NLP             Natural Language Processing
+API             Application Programming Interface
+UI              User Interface
+UX              User Experience
+DBMS            Database Management System
+SQL             Structured Query Language
+JSON            JavaScript Object Notation
+JWT             JSON Web Token
+PIN             Personal Identification Number
+QR              Quick Response
+WS              WebSocket
+ORM             Object Relational Mapper
+CORS            Cross-Origin Resource Sharing
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 10
+
+================================================================================
+CHAPTER 1: INTRODUCTION
+================================================================================
+
+1.1 Introduction to the Project
+
+BankQ is a Bank Queue Management System developed to modernize and streamline the customer experience at bank branches. The system allows customers to book appointment slots online, check in at the branch using a 4-digit PIN at a kiosk, and track their queue status in real time. An AI-powered chatbot is integrated to assist customers with queries related to banking services, slot booking, and queue management.
+
+The project is developed as part of the MCA Semester III Generative AI subject, demonstrating the practical integration of a Large Language Model (LLM) API into a full-stack web application.
+
+1.2 Background of the Project
+
+Traditional bank queue management relies on physical token dispensers and manual processes. Customers arrive at the branch without prior appointments, leading to overcrowding and long wait times. With the advancement of web technologies and Generative AI, it is now feasible to build intelligent systems that allow customers to pre-book slots, receive digital tokens, and interact with AI assistants for instant help.
+
+Groq AI provides a fast and free LLM API that enables natural language understanding and response generation, making it suitable for a banking chatbot use case.
+
+1.3 Motivation
+
+The motivation for this project includes:
+- Reducing physical waiting time at bank branches.
+- Providing customers with a convenient online slot booking system.
+- Enabling real-time queue visibility for customers and tellers.
+- Integrating Generative AI to provide intelligent customer assistance without human intervention.
+- Demonstrating practical use of LLM APIs in a real-world application.
+
+1.4 Problem Statement
+
+To design and develop a Bank Queue Management System using Generative Artificial Intelligence to address the problem of unorganized bank queues and lack of customer assistance by providing online slot booking, PIN-based kiosk check-in, real-time queue tracking, and an AI chatbot to bank customers.
+
+1.5 Objectives of the Project
+
+1. To study existing methods used for bank queue management.
+2. To design a user-friendly web application for customers, tellers, and security staff.
+3. To integrate the Groq AI LLM API as a Generative AI component.
+4. To implement major functional modules: slot booking, kiosk check-in, live tracker, teller dashboard, and AI chatbot.
+5. To evaluate the usefulness and performance of the application using functional test cases.
+6. To identify system limitations and opportunities for improvement.
+
+1.6 Scope of the Project
+
+- Intended users: Bank customers, tellers, security staff, and administrators.
+- Application domain: Bank branch queue management.
+- Main features: Online slot booking, PIN-based check-in, real-time queue tracking, teller dashboard, appointment history, AI chatbot.
+- AI capability: Natural language question answering for BankQ-related queries using Groq AI.
+- Platform: Web application accessible via browser.
+- Boundaries: The system manages queues for three demo branches (Bangalore, Delhi, Mumbai) and five services.
+
+1.7 Organization of the Report
+
+Chapter 2 analyzes the existing system and its limitations. Chapter 3 describes the proposed system. Chapter 4 explains the Generative AI components used. Chapter 5 covers system analysis and design. Chapter 6 lists hardware and software requirements. Chapter 7 describes implementation. Chapter 8 presents testing and results. Chapter 9 discusses scope, limitations, and future enhancements. Chapter 10 concludes the report.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 11
+
+================================================================================
+CHAPTER 2: EXISTING SYSTEM AND PROBLEM ANALYSIS
+================================================================================
+
+2.1 Overview of the Existing System
+
+In the existing system, customers visit the bank branch in person to obtain a physical token from a token dispenser machine or from a bank staff member. They then wait in the branch until their token number is called. There is no prior appointment system, no digital queue visibility, and no intelligent assistance available to customers.
+
+2.2 Working of the Existing System
+
+1. Customer arrives at the bank branch.
+2. Customer collects a physical token from the dispenser.
+3. Customer waits in the branch seating area.
+4. Teller calls the next token number verbally or via a display board.
+5. Customer approaches the counter for service.
+6. Service is completed and customer leaves.
+
+2.3 Limitations of the Existing System
+
+- Customers must physically visit the branch to get a token, even for simple services.
+- No prior appointment booking is possible, leading to unpredictable wait times.
+- No real-time queue visibility for customers waiting outside the branch.
+- No intelligent assistance for customer queries; customers must ask staff manually.
+- Long queues during peak hours cause customer dissatisfaction.
+- No digital record of customer appointments or service history.
+- Security staff cannot verify customers digitally.
+
+2.4 Literature Review
+
+[1] Various bank queue management systems have been proposed using SMS-based token systems, but these lack real-time web interfaces and AI integration.
+[2] Chatbot integration in banking has been studied using rule-based systems, but LLM-based chatbots provide more natural and flexible responses.
+[3] FastAPI and React have been widely adopted for building modern full-stack web applications due to their performance and developer experience.
+[4] Groq AI provides one of the fastest LLM inference APIs available, making it suitable for real-time chatbot applications.
+
+2.5 Comparative Analysis
+
+Feature              Existing System                  Proposed System (BankQ)
+User Interaction     Physical visit required          Online booking via web app
+Appointment          No prior booking                 Online slot booking (9AM-5PM)
+Check-in             Physical token collection        4-digit PIN at kiosk
+Queue Visibility     Only inside branch               Real-time via Live Tracker
+AI Integration       None                             Groq AI LLM chatbot
+Customer Assistance  Manual (ask staff)               AI chatbot available 24/7
+Token Management     Paper-based                      Digital token with prefix
+Data Management      No digital records               MySQL database with history
+Limitations          Long waits, no digital access    Internet dependency, API limits
+
+2.6 Problem Identification
+
+- Customers waste time waiting at the branch without knowing queue status.
+- No system exists for pre-booking appointments at bank branches.
+- Customers have no digital channel to get answers to common banking queries.
+- Security staff cannot verify customer appointments digitally.
+
+2.7 Need for the Proposed System
+
+A web-based queue management system with AI assistance is justified because it eliminates physical waiting, provides digital appointment management, enables real-time queue tracking, and offers intelligent customer support through a Generative AI chatbot — all of which are absent in the existing system.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 12
+
+================================================================================
+CHAPTER 3: PROPOSED SYSTEM
+================================================================================
+
+3.1 Introduction
+
+BankQ is a full-stack web application that replaces the traditional physical queue system with a digital, AI-assisted platform. Customers can book slots online, check in at the kiosk using a PIN, and track their queue status in real time. An AI chatbot powered by Groq AI assists customers with queries.
+
+3.2 Overview of the Proposed System
+
+The system consists of a React frontend, a FastAPI backend, and a MySQL database. Customers register and log in to book appointment slots. On arrival, they enter their 4-digit PIN at the kiosk to check in. Tellers use the dashboard to call the next customer. The Live Tracker page shows real-time queue updates via WebSockets. The AI chatbot answers customer queries using the Groq AI LLM API.
+
+3.3 Proposed System Architecture
+
+User (Browser)
+    |
+React Frontend (Vite + Tailwind CSS) -- Port 5173
+    |
+    | HTTP / WebSocket
+    |
+FastAPI Backend -- Port 9000
+    |         |              |
+  MySQL    Groq AI API    WebSocket Manager
+  Database  (LLM Chat)   (Real-time Queue)
+
+3.4 Major Features
+
+1. User Registration and Login: JWT-based authentication. Registration requires last 4 digits of bank account for verification.
+2. Online Slot Booking: 16 time slots from 9AM to 5PM. Generates digital token and 4-digit PIN on confirmation.
+3. PIN-based Kiosk Check-in: Security staff enters customer PIN to mark them as checked in.
+4. Real-time Live Tracker: WebSocket-based live queue updates showing checked-in, in-progress, and completed tokens.
+5. Teller Dashboard: Tellers call next customer and mark service as complete.
+6. My Appointments: Customers view their booking history with status, token, PIN, service, and branch details.
+7. AI Chatbot: Floating chatbot powered by Groq AI answers BankQ and banking-related queries.
+
+3.5 Functional Requirements
+
+- The system shall allow customers to register with bank account verification.
+- The system shall allow customers to book appointment slots online.
+- The system shall generate a unique token number and 4-digit PIN for each booking.
+- The system shall allow kiosk check-in using PIN.
+- The system shall broadcast real-time queue updates via WebSocket.
+- The system shall allow tellers to call next customer and complete tokens.
+- The system shall provide an AI chatbot for customer queries.
+- The system shall handle API errors and invalid inputs gracefully.
+
+3.6 Non-Functional Requirements
+
+- Usability: Simple and intuitive UI accessible to all age groups.
+- Performance: Real-time WebSocket updates with minimal latency.
+- Security: JWT authentication, role-based access, no sensitive data in frontend.
+- Reliability: Graceful error handling for API failures and invalid inputs.
+- Scalability: Modular FastAPI backend can be extended with new endpoints.
+- Maintainability: Clean separation of frontend and backend codebases.
+
+3.7 Module Description
+
+Module               Description
+User Interface       React pages for Auth, BookSlot, KioskScanner, LiveTracker, MyAppointments, TellerDashboard
+Authentication       JWT-based login/register with bank account verification
+Slot Booking         Branch/service/date/time selection, token and PIN generation
+Kiosk Check-in       PIN entry to mark appointment as CHECKED_IN
+Live Tracker         WebSocket-based real-time queue status display
+Teller Dashboard     Call next customer, complete token
+AI Chatbot           Floating chat UI calling Groq AI API for responses
+Database Module      MySQL with SQLAlchemy ORM, 6 tables
+Error Handling       HTTP exceptions, API fallback messages, form validation
+
+3.8 Advantages of the Proposed System
+
+- Eliminates physical waiting at the branch.
+- Provides digital appointment records for customers.
+- Real-time queue visibility reduces uncertainty.
+- AI chatbot reduces load on bank staff for common queries.
+- PIN-based check-in is fast and secure.
+- Role-based access ensures only authorized users access teller/kiosk functions.
+
+3.9 Feasibility Study
+
+Technical feasibility: All technologies used (FastAPI, React, MySQL, Groq AI) are freely available and well-documented. The team has the required skills.
+Economic feasibility: All tools are free or open-source. Groq AI offers a free tier. No hosting costs for local demo.
+Operational feasibility: The web interface is simple and suitable for bank customers of all technical levels.
+Schedule feasibility: The project was completed within the available semester timeline.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 13-14
+
+================================================================================
+CHAPTER 4: GENERATIVE AI COMPONENTS USED
+================================================================================
+
+4.1 Introduction to Generative AI
+
+Generative Artificial Intelligence refers to AI systems that can generate new content — such as text, images, or code — based on input prompts. Large Language Models (LLMs) are a class of Generative AI that are trained on large text datasets and can understand and generate human-like text responses. In BankQ, a Generative AI LLM is used to power the customer-facing chatbot, enabling natural language interaction for banking queries.
+
+4.2 Generative AI Model Used
+
+Provider: Groq AI (https://groq.com)
+Model: openai/gpt-oss-20b
+Access Method: REST API via HTTP POST request
+Purpose: Natural language question answering for BankQ and banking-related customer queries
+API Endpoint: https://api.groq.com/openai/v1/chat/completions
+Authentication: Bearer token (API key)
+
+4.3 Generative AI Components
+
+Component            Description                          Use in Project
+Large Language Model Generates text responses             Answers customer queries in chatbot
+Prompt Engineering   Structures instructions for model    System prompt defines BankQ context
+API Integration      Connects app to Groq AI service      httpx async HTTP POST from FastAPI
+Output Processing    Extracts reply from API response     Parses choices[0].message.content
+Error Handling       Handles API failures                 Returns fallback message on exception
+
+4.4 Prompt Engineering and Design
+
+The system uses a system prompt to constrain the AI to BankQ and banking-related topics only.
+
+System Prompt used in BankQ:
+"You are BankQ Assistant, a helpful chatbot for BankQ - a bank queue management system.
+The bank offers: Cash Deposit, Cash Withdrawal, Loan Inquiry, Account Opening, Demand Draft.
+Branches in Bangalore, Delhi, Mumbai. Customers book slots online (9AM-5PM, 30-min slots)
+and check in with a 4-digit PIN at the kiosk. ONLY answer BankQ and banking related questions.
+If asked anything unrelated, politely say you can only help with BankQ topics. Be short and friendly."
+
+This prompt:
+- Defines the role of the AI (BankQ Assistant)
+- Provides context about services, branches, and features
+- Constrains responses to BankQ/banking topics only
+- Sets tone (short and friendly)
+
+Example interaction:
+User: "How do I book a slot?"
+AI: "To book a slot, log in to BankQ, click 'Book Slot', select your branch, service, date and time, and confirm. You will receive a token number and a 4-digit PIN."
+
+4.5 Workflow of the Generative AI Component
+
+1. Customer types a message in the floating chatbot UI.
+2. Frontend sends POST /api/ai/chat with { "message": "..." } to FastAPI backend.
+3. FastAPI constructs the request with system prompt + user message.
+4. httpx sends async POST to Groq AI API endpoint with Bearer token.
+5. Groq AI LLM generates a response.
+6. FastAPI extracts the reply text from the JSON response.
+7. Reply is returned to the frontend as { "reply": "..." }.
+8. Frontend displays the reply in the chat window.
+
+4.6 Model Parameters and Configuration
+
+Parameter            Value
+Model                openai/gpt-oss-20b
+Max Tokens           200
+Temperature          Default (not explicitly set)
+System Prompt        BankQ context (see 4.4)
+Timeout              15 seconds
+
+4.7 AI Output Validation
+
+- If the Groq API returns an error or times out, the backend catches the exception and returns: "I can only help with BankQ and banking related questions. Try asking about booking a slot, services, branches, or kiosk check-in!"
+- The system prompt instructs the model to redirect off-topic questions politely.
+- Responses are limited to 200 tokens to keep answers concise.
+- The frontend shows a "Thinking..." indicator while waiting for the response.
+
+4.8 Responsible AI Considerations
+
+- Data Privacy: No personal customer data is sent to the Groq AI API. Only the user's chat message is transmitted.
+- API Key Protection: The Groq API key is stored only in the backend (main.py) and never exposed to the frontend.
+- Bias and Fairness: The chatbot is restricted to BankQ topics, minimizing risk of biased responses.
+- Human Oversight: The chatbot is advisory only. All actual transactions are handled by bank staff.
+- Misinformation: The system prompt constrains the AI to factual BankQ information only.
+- Ethical Use: The chatbot is used solely for customer assistance, not for any automated decision-making.
+
+4.9 Role of Generative AI in the Project
+
+Generative AI (Groq LLM) is used specifically for the chatbot module — natural language understanding and response generation. All other features (slot booking, PIN generation, queue management, WebSocket updates, authentication) are implemented using conventional programming with FastAPI, React, and MySQL.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 15-16
+
+================================================================================
+CHAPTER 5: SYSTEM ANALYSIS AND DESIGN
+================================================================================
+
+5.1 System Architecture Diagram
+
+[See Fig. 5.1 - Include screenshot/diagram in final Word document]
+
+The architecture consists of:
+- React Frontend (Port 5173): Pages for Auth, BookSlot, KioskScanner, LiveTracker, MyAppointments, TellerDashboard, AiChat component
+- FastAPI Backend (Port 9000): REST API endpoints + WebSocket server
+- MySQL Database: 6 tables - users, branches, services, counters, appointments, bank_accounts
+- Groq AI API: External LLM service for chatbot
+- WebSocket Manager: Broadcasts real-time queue events to connected clients
+
+5.2 Use Case Diagram
+
+[See Fig. 5.2 - Include diagram in final Word document]
+
+Actors and use cases:
+- Customer: Register, Login, Book Slot, View My Appointments, Use AI Chatbot, View Live Tracker
+- Security Staff: Login, Kiosk PIN Check-in
+- Teller: Login, Call Next Customer, Complete Token
+- Admin: All of the above
+
+5.3 Data Flow Diagram (DFD)
+
+[See Fig. 5.3 - Include diagram in final Word document]
+
+Level 0 (Context Diagram):
+Customer/Teller/Security --> [BankQ System] --> Queue Status / Booking Confirmation / AI Response
+
+Level 1:
+- Customer --> Booking Module --> MySQL (appointments table)
+- Customer --> AI Chatbot Module --> Groq AI API --> Response
+- Security --> Kiosk Module --> MySQL (update status) --> WebSocket Broadcast
+- Teller --> Queue Module --> MySQL (update status) --> WebSocket Broadcast
+- Customer --> Live Tracker --> WebSocket --> Real-time updates
+
+5.4 Flowchart
+
+Customer Booking Flow:
+Login --> Select Branch --> Select Service --> Select Date --> Select Time Slot --> Confirm --> Token + PIN Generated --> Booking Saved to DB
+
+Kiosk Check-in Flow:
+Enter PIN --> Validate PIN in DB --> Mark as CHECKED_IN --> Broadcast WebSocket Event
+
+Teller Flow:
+Call Next --> Fetch CHECKED_IN appointment --> Mark as IN_PROGRESS --> Broadcast --> Complete --> Mark as COMPLETED --> Broadcast
+
+5.5 Database Design
+
+Tables:
+1. users (user_id, full_name, email, password_hash, role)
+2. branches (branch_id, branch_name, city)
+3. services (service_id, service_name, service_code_prefix, avg_duration_minutes)
+4. counters (counter_id, counter_number, branch_id)
+5. appointments (appointment_id, token_number, customer_id, branch_id, service_id, booking_date, slot_start_time, qr_hash, pin_code, status, counter_id)
+6. bank_accounts (account_id, holder_name, last4, is_registered)
+
+Relationships:
+- appointments.customer_id --> users.user_id
+- appointments.branch_id --> branches.branch_id
+- appointments.service_id --> services.service_id
+- appointments.counter_id --> counters.counter_id
+- counters.branch_id --> branches.branch_id
+
+Status values for appointments: BOOKED, CHECKED_IN, IN_PROGRESS, COMPLETED, CANCELLED
+
+5.6 Input and Output Design
+
+[See Fig. 7.1 to 7.8 - Include screenshots in final Word document]
+
+Input interfaces: Login form, Register form (with last4 field), Book Slot form, Kiosk PIN input, Teller dashboard controls, Chat input box.
+Output interfaces: Booking confirmation with token and PIN, My Appointments list with status badges, Live Tracker with real-time events, AI chatbot responses.
+
+5.7 Security Design
+
+- JWT tokens used for all authenticated API calls. Token stored in localStorage.
+- Role-based access: CUSTOMER, TELLER, SECURITY, ADMIN roles enforced on backend endpoints.
+- Bank account last4 verification required during registration to prevent fake accounts.
+- Groq API key stored only in backend, never sent to frontend.
+- CORS middleware configured on FastAPI to allow only frontend origin.
+- Passwords hashed using bcrypt via passlib before storing in database.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 17
+
+================================================================================
+CHAPTER 6: HARDWARE AND SOFTWARE REQUIREMENTS
+================================================================================
+
+6.1 Hardware Requirements
+
+Component         Minimum Requirement              Actual Configuration
+Processor         Dual-core 1.8 GHz or higher      Intel Core i5 or equivalent
+RAM               4 GB                             8 GB
+Storage           10 GB free space                 SSD with sufficient space
+Display           1280x720 resolution              1920x1080
+Internet          Required for Groq AI API         Broadband connection
+GPU               Not required                     N/A
+
+6.2 Software Requirements
+
+Software Component     Purpose                          Version Used
+Operating System       Runs the application             Windows 10/11
+Python                 Backend development              3.11+
+FastAPI                Backend web framework            0.110+
+Uvicorn                ASGI server for FastAPI          0.29+
+SQLAlchemy             ORM for MySQL                    2.0+
+MySQL                  Relational database              8.0
+Node.js                Frontend build tool              18+
+React                  Frontend UI framework            18+
+Vite                   Frontend build tool              5+
+Tailwind CSS           UI styling                       3+
+Axios                  HTTP client for frontend         1.6+
+httpx                  Async HTTP client for backend    0.27+
+passlib[bcrypt]        Password hashing                 1.7+
+python-jose            JWT token handling               3.3+
+Groq AI API            Generative AI LLM service        openai/gpt-oss-20b
+Web Browser            Application access               Chrome / Edge (latest)
+
+6.3 Development Environment
+
+- Backend: Python with FastAPI, running on Uvicorn at port 9000
+- Frontend: React with Vite dev server at port 5173
+- Database: MySQL 8.0 running locally at port 3306, database name: bankq
+- IDE: VS Code
+- Package manager: pip (backend), npm (frontend)
+- API proxy: Vite proxy configured to forward /api/* to http://localhost:9000
+
+6.4 AI Service Requirements
+
+Provider: Groq AI
+Model: openai/gpt-oss-20b
+API Access: Bearer token authentication (API key from console.groq.com)
+Internet: Required for all chatbot requests
+Usage Limits: Free tier with rate limits
+Pricing: Free tier available; no cost for demo usage
+Note: API key is stored in main.py backend only. Never included in frontend code or version control.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 18
+
+================================================================================
+CHAPTER 7: IMPLEMENTATION
+================================================================================
+
+7.1 Introduction
+
+The BankQ system was implemented as a full-stack web application with a FastAPI backend, React frontend, and MySQL database. The Groq AI API was integrated for the chatbot module. The implementation followed a modular approach with clear separation between frontend pages, backend endpoints, and database models.
+
+7.2 Project Structure
+
+Backend (root):
+  main.py         - FastAPI app, all endpoints, Groq AI chatbot
+  auth.py         - JWT authentication, register/login endpoints
+  models.py       - SQLAlchemy database models
+  database.py     - Database connection and session
+  seed.py         - Demo data seeding
+  migrate.py      - Database migration script
+  requirements.txt - Python dependencies
+
+Frontend (frontend/src/):
+  pages/
+    Auth.jsx            - Login and register page
+    BookSlot.jsx        - Slot booking page
+    KioskScanner.jsx    - Kiosk PIN check-in page
+    LiveTracker.jsx     - Real-time queue tracker
+    MyAppointments.jsx  - Appointment history page
+    TellerDashboard.jsx - Teller queue management
+  components/
+    Navbar.jsx    - Navigation bar
+    AiChat.jsx    - Floating AI chatbot component
+  context/
+    AuthContext.jsx - JWT auth context
+  App.jsx         - Route definitions
+
+7.3 Implementation of Modules
+
+Authentication Module (auth.py):
+- POST /auth/register: Validates last4 digits against bank_accounts table, hashes password with bcrypt, creates user with CUSTOMER role.
+- POST /auth/login: Verifies credentials, returns JWT token.
+- get_current_user: Decodes JWT, fetches user from DB.
+
+Slot Booking Module (main.py - /appointments/book):
+- Checks for duplicate bookings.
+- Generates SHA-256 QR hash and random 4-digit PIN.
+- Creates token with service prefix (e.g., CD-101 for Cash Deposit).
+- Saves appointment to MySQL.
+
+Kiosk Module (main.py - /kiosk/verify):
+- Accepts PIN, finds appointment, marks as CHECKED_IN.
+- Broadcasts WebSocket event to all connected clients for that branch.
+
+Teller Module (main.py - /teller/call-next, /teller/complete):
+- Fetches next CHECKED_IN appointment ordered by slot time.
+- Marks as IN_PROGRESS or COMPLETED and broadcasts WebSocket event.
+
+AI Chatbot Module (main.py - /ai/chat):
+- Receives user message from frontend.
+- Constructs request with system prompt + user message.
+- Sends async POST to Groq AI API using httpx.
+- Returns AI-generated reply to frontend.
+
+7.4 AI Model Integration
+
+Code snippet (main.py):
+
+  @app.post("/ai/chat")
+  async def ai_chat(req: ChatRequest):
+      try:
+          async with httpx.AsyncClient(timeout=15) as client:
+              resp = await client.post(
+                  GROQ_URL,
+                  headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
+                  json={
+                      "model": "openai/gpt-oss-20b",
+                      "messages": [
+                          {"role": "system", "content": BANK_CONTEXT},
+                          {"role": "user", "content": req.message},
+                      ],
+                      "max_tokens": 200,
+                  },
+              )
+              result = resp.json()
+              reply = result["choices"][0]["message"]["content"]
+              return {"reply": reply}
+      except Exception:
+          return {"reply": "I can only help with BankQ and banking related questions."}
+
+7.5 Prompt Implementation
+
+System prompt (BANK_CONTEXT):
+"You are BankQ Assistant, a helpful chatbot for BankQ - a bank queue management system.
+The bank offers: Cash Deposit, Cash Withdrawal, Loan Inquiry, Account Opening, Demand Draft.
+Branches in Bangalore, Delhi, Mumbai. Customers book slots online (9AM-5PM, 30-min slots)
+and check in with a 4-digit PIN at the kiosk. ONLY answer BankQ and banking related questions.
+If asked anything unrelated, politely say you can only help with BankQ topics. Be short and friendly."
+
+7.6 Database Implementation
+
+Database: bankq (MySQL 8.0)
+ORM: SQLAlchemy with declarative base
+Tables created automatically via Base.metadata.create_all()
+Key queries:
+- Appointment booking: INSERT with token, PIN, QR hash
+- Kiosk check-in: UPDATE appointments SET status='CHECKED_IN' WHERE pin_code=?
+- Teller call-next: SELECT first CHECKED_IN ordered by slot_start_time
+- My appointments: SELECT all WHERE customer_id = current_user
+
+7.7 User Interface Implementation
+
+[Include screenshots Fig. 7.1 to 7.8 in final Word document]
+
+- Login/Register page: Clean form with email, password, and last4 field for registration.
+- Book Slot page: Dropdowns for branch, service, date picker, 16 time slot buttons.
+- Booking Confirmation: Shows token number and 4-digit PIN prominently.
+- My Appointments: Card list with color-coded status badges (BOOKED=blue, CHECKED_IN=yellow, IN_PROGRESS=orange, COMPLETED=green).
+- Kiosk Scanner: Large centered PIN input field.
+- Live Tracker: Branch selector, 3 stat cards, real-time event feed.
+- Teller Dashboard: Call Next and Complete buttons with current token display.
+- AI Chatbot: Floating bubble bottom-right, opens 420px chat window with suggestion chips.
+
+7.8 Error Handling
+
+- Invalid login: 401 Unauthorized returned by backend, displayed as error message on frontend.
+- Duplicate booking: 409 Conflict returned, shown as alert.
+- Invalid PIN at kiosk: 404 Not Found returned, shown as error.
+- Groq AI API failure: Exception caught, fallback message returned.
+- Empty chat input: Send button disabled when input is empty.
+- Network errors: Axios catch block shows "Something went wrong" message.
+
+7.9 Deployment
+
+1. Install Python dependencies: pip install -r requirements.txt
+2. Set up MySQL database: CREATE DATABASE bankq;
+3. Run migrations: python migrate.py
+4. Seed demo data: python seed.py
+5. Start backend: uvicorn main:app --port 9000 --reload
+6. Install frontend dependencies: cd frontend && npm install
+7. Start frontend: npm run dev
+8. Open browser: http://localhost:5173
+
+Demo credentials:
+- Customer: alice@example.com / pass123
+- Teller: teller1@example.com / pass123
+- Security: security1@example.com / pass123
+- Admin: admin@example.com / pass123
+
+7.10 Source Code Repository
+
+Source code is maintained locally. No public repository link. API keys and database credentials are not included in any shared files.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 19
+
+================================================================================
+CHAPTER 8: TESTING AND RESULTS
+================================================================================
+
+8.1 Introduction to Testing
+
+The BankQ application was tested using functional testing to verify that all modules work correctly. AI output evaluation was performed to assess the quality and relevance of chatbot responses.
+
+8.2 Testing Methodology
+
+- Functional Testing: Each endpoint and UI feature was tested manually.
+- Integration Testing: Frontend-backend communication tested via browser.
+- AI Output Evaluation: Chatbot responses tested for relevance, accuracy, and appropriate handling of off-topic queries.
+- Security Testing: JWT token validation, role-based access, and invalid input handling tested.
+
+8.3 Test Cases
+
+Test ID  Scenario                        Input                        Expected Output              Status
+TC01     Valid customer login             alice@example.com/pass123    JWT token, redirect to home  PASS
+TC02     Invalid login                   wrong@email.com/wrong        401 error message            PASS
+TC03     Register with valid last4       last4=1234                   Account created, auto-login  PASS
+TC04     Register with invalid last4     last4=9999                   Error: account not found     PASS
+TC05     Book a slot                     Branch/service/date/time     Token + PIN displayed        PASS
+TC06     Duplicate booking               Same slot again              409 conflict error           PASS
+TC07     Kiosk PIN check-in              Valid PIN                    CHECKED_IN status            PASS
+TC08     Kiosk invalid PIN               Wrong PIN                    404 error message            PASS
+TC09     Teller call next                Click Call Next              Token called, IN_PROGRESS    PASS
+TC10     Teller complete token           Click Complete               COMPLETED status             PASS
+TC11     AI chatbot - relevant query     "How do I book a slot?"      Correct booking instructions PASS
+TC12     AI chatbot - off-topic query    "What is cricket?"           Polite redirect message      PASS
+TC13     AI chatbot - API unavailable    Disconnect internet          Fallback error message       PASS
+TC14     Live Tracker WebSocket          Open Live Tracker page       Real-time events displayed   PASS
+TC15     My Appointments                 Login as customer            All bookings listed          PASS
+
+8.4 AI Output Evaluation
+
+Criteria             Evaluation
+Relevance            Responses are relevant to BankQ and banking topics
+Factual Correctness  System prompt provides accurate BankQ facts to the model
+Completeness         Responses cover the asked topic within 200 token limit
+Readability          Responses are clear, friendly, and concise
+Off-topic Handling   Model correctly redirects unrelated questions
+Response Time        Average response time: 1-3 seconds via Groq AI API
+Consistency          Consistent responses for similar queries
+
+8.5 Results and Observations
+
+- All 15 functional test cases passed successfully.
+- The AI chatbot correctly answered BankQ-related queries in all test cases.
+- Off-topic queries were handled with a polite redirect message.
+- Real-time WebSocket updates were received within 1 second of status changes.
+- PIN-based check-in worked correctly for all valid PINs.
+- Role-based access correctly restricted teller/kiosk endpoints from customers.
+
+8.6 Performance Analysis
+
+Metric                    Observed Value
+Backend startup time      ~2 seconds
+Slot booking response     <500ms
+Kiosk check-in response   <300ms
+AI chatbot response time  1-3 seconds (Groq API)
+WebSocket event latency   <1 second
+Page load time            <2 seconds (Vite dev server)
+
+8.7 Screenshots of the Working Application
+
+[Include Fig. 7.1 to 7.8 screenshots in final Word document with captions]
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 20
+
+================================================================================
+CHAPTER 9: SCOPE, LIMITATIONS AND FUTURE ENHANCEMENTS
+================================================================================
+
+9.1 Scope of the Project
+
+BankQ is scoped for demo use with 3 branches (Bangalore, Delhi, Mumbai), 5 banking services, and 4 user roles (Customer, Teller, Security, Admin). The system supports online slot booking, PIN-based check-in, real-time queue tracking, and AI-assisted customer support via web browser.
+
+9.2 Limitations of the Project
+
+- The system depends on the Groq AI API for chatbot functionality; internet connectivity is required.
+- Groq AI free tier has rate limits which may affect chatbot availability under heavy usage.
+- The AI model may occasionally generate responses that are slightly off-topic despite the system prompt.
+- The application is a demo system; it is not connected to a real bank's core banking system.
+- No mobile application is available; the system is web-only.
+- The system currently supports English language only.
+- QR code scanning is not implemented; only PIN-based check-in is available.
+
+9.3 Future Enhancements
+
+- Integration with real bank core banking systems for live data.
+- Development of a mobile application (Android/iOS).
+- Multilingual chatbot support for regional languages.
+- Voice-based interaction with the AI chatbot.
+- QR code scanning at kiosk in addition to PIN.
+- SMS/email notifications for booking confirmation and queue updates.
+- AI-based queue wait time prediction.
+- Admin dashboard with analytics and reports.
+- Improved AI output validation to further reduce off-topic responses.
+- Deployment on cloud (AWS/Azure) for production use.
+
+9.4 Social and Practical Applications
+
+BankQ can significantly reduce customer waiting time at bank branches, improve customer satisfaction, and reduce the workload on bank staff for routine queries. The AI chatbot provides 24/7 assistance without requiring additional human resources. The system can be adapted for other queue-based services such as hospitals, government offices, and service centers.
+
+9.5 Sustainability and Maintainability
+
+The modular architecture (separate frontend and backend) makes the system easy to maintain and extend. New services, branches, or features can be added by updating the database and adding new API endpoints. The Groq AI model can be swapped for any OpenAI-compatible API without changing the frontend. The codebase uses standard, well-documented technologies ensuring long-term maintainability.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 21
+
+================================================================================
+CHAPTER 10: CONCLUSION
+================================================================================
+
+10.1 Conclusion
+
+This project successfully developed BankQ, a Bank Queue Management System with an integrated Generative AI chatbot. The system addresses the problem of unorganized bank queues and lack of customer assistance by providing online slot booking, 4-digit PIN-based kiosk check-in, real-time queue tracking via WebSockets, a teller dashboard, appointment history, and an AI chatbot powered by the Groq AI LLM API.
+
+The Generative AI component (Groq AI, openai/gpt-oss-20b model) was successfully integrated using the httpx library for async HTTP calls. The system prompt was carefully designed to constrain the chatbot to BankQ and banking-related topics. All 15 functional test cases passed, and the AI chatbot demonstrated relevant and accurate responses.
+
+The major limitation is the dependency on the Groq AI API for chatbot functionality, which requires internet connectivity. Future work includes mobile app development, multilingual support, and cloud deployment.
+
+10.2 Learning Outcomes
+
+Through this project, the team gained:
+- Understanding of Generative AI concepts and LLM-based APIs.
+- Practical experience with prompt engineering and system prompt design.
+- Integration of a Generative AI API (Groq) into a full-stack web application.
+- Development of a complete web application using FastAPI, React, and MySQL.
+- Evaluation of AI-generated outputs for relevance and accuracy.
+- Understanding of responsible AI practices including API key protection and data privacy.
+- Experience with real-time communication using WebSockets.
+- Collaborative software development and project documentation.
+
+10.3 Final Remarks
+
+BankQ demonstrates that Generative AI can be practically integrated into everyday applications to improve user experience. The combination of a modern web stack with an LLM-powered chatbot provides a scalable foundation that can be extended into a production-ready bank queue management solution.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 22
+
+================================================================================
+BIBLIOGRAPHY / REFERENCES
+================================================================================
+
+[1] Groq AI. "Groq API Documentation." Groq Inc. 2024. https://console.groq.com/docs. Accessed June 2025.
+
+[2] FastAPI. "FastAPI Documentation." Tiangolo. 2024. https://fastapi.tiangolo.com. Accessed June 2025.
+
+[3] React. "React Documentation." Meta Open Source. 2024. https://react.dev. Accessed June 2025.
+
+[4] SQLAlchemy. "SQLAlchemy Documentation." SQLAlchemy Authors. 2024. https://docs.sqlalchemy.org. Accessed June 2025.
+
+[5] MySQL. "MySQL 8.0 Reference Manual." Oracle Corporation. 2024. https://dev.mysql.com/doc/refman/8.0/en/. Accessed June 2025.
+
+[6] Vite. "Vite Documentation." Evan You. 2024. https://vitejs.dev. Accessed June 2025.
+
+[7] Tailwind CSS. "Tailwind CSS Documentation." Tailwind Labs. 2024. https://tailwindcss.com/docs. Accessed June 2025.
+
+[8] OpenAI. "Chat Completions API." OpenAI. 2024. https://platform.openai.com/docs/api-reference/chat. Accessed June 2025.
+
+[9] passlib. "passlib Documentation." passlib contributors. 2024. https://passlib.readthedocs.io. Accessed June 2025.
+
+[10] python-jose. "python-jose Documentation." 2024. https://python-jose.readthedocs.io. Accessed June 2025.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 23
+
+================================================================================
+APPENDICES
+================================================================================
+
+Appendix A: Source Code
+
+Key backend files: main.py, auth.py, models.py, database.py, seed.py
+Key frontend files: App.jsx, AiChat.jsx, BookSlot.jsx, MyAppointments.jsx, LiveTracker.jsx, KioskScanner.jsx, TellerDashboard.jsx, Auth.jsx
+
+See Chapter 7 for code snippets. Full source code available in project folder.
+
+Appendix B: Prompt Library
+
+Prompt Name: BankQ System Prompt
+Purpose: Constrains AI chatbot to BankQ and banking topics only
+Content: "You are BankQ Assistant, a helpful chatbot for BankQ - a bank queue management system. The bank offers: Cash Deposit, Cash Withdrawal, Loan Inquiry, Account Opening, Demand Draft. Branches in Bangalore, Delhi, Mumbai. Customers book slots online (9AM-5PM, 30-min slots) and check in with a 4-digit PIN at the kiosk. ONLY answer BankQ and banking related questions. If asked anything unrelated, politely say you can only help with BankQ topics. Be short and friendly."
+
+Sample Input: "How do I check in at the kiosk?"
+Sample Output: "When you arrive at the bank, go to the kiosk and enter your 4-digit PIN to check in. Your PIN is shown on your booking confirmation and in My Bookings."
+
+Appendix C: Sample Input and Output
+
+Input: "What services does BankQ offer?"
+Output: "BankQ offers the following services: Cash Deposit, Cash Withdrawal, Loan Inquiry, Account Opening, and Demand Draft. You can book a slot for any of these services online!"
+
+Input: "Tell me a joke"
+Output: "I'm here to help with BankQ and banking related questions only! You can ask me about booking slots, services, branches, kiosk check-in, or queue tracking."
+
+Appendix D: User Manual
+
+Customer:
+1. Open http://localhost:5173
+2. Register with name, email, password, and last 4 digits of bank account (use 1234, 5678, 4444, or 7777 for demo)
+3. Login with registered credentials
+4. Click "Book Slot" to book an appointment
+5. Note your token number and 4-digit PIN
+6. At the branch, enter PIN at kiosk to check in
+7. Track queue status on "Live Tracker" page
+8. View booking history on "My Bookings" page
+9. Use the chatbot (bottom-right bubble) for any queries
+
+Teller:
+1. Login with teller credentials (teller1@example.com / pass123)
+2. Go to Teller Dashboard
+3. Click "Call Next" to call the next checked-in customer
+4. Click "Complete" when service is done
+
+Security:
+1. Login with security credentials (security1@example.com / pass123)
+2. Go to Kiosk Scanner
+3. Enter customer's 4-digit PIN to check them in
+
+Appendix E: Installation and Deployment Guide
+
+Prerequisites: Python 3.11+, Node.js 18+, MySQL 8.0
+
+Backend setup:
+  cd "d:\Q Ease Banking"
+  pip install -r requirements.txt
+  mysql -u root -p -e "CREATE DATABASE bankq;"
+  python migrate.py
+  python seed.py
+  uvicorn main:app --port 9000 --reload
+
+Frontend setup:
+  cd "d:\Q Ease Banking\frontend"
+  npm install
+  npm run dev
+
+Access: http://localhost:5173
+
+Appendix F: Test Results
+
+See Chapter 8, Table 8.1 for all 15 test cases and results.
+
+Appendix I: AI Usage Disclosure
+
+Generative AI tools were used during the development of this project for chatbot response generation (Groq AI API, openai/gpt-oss-20b model) and for development assistance. The project team reviewed, tested, and verified all AI-generated outputs. The final implementation, evaluation, and documentation were checked by the team, and external sources have been acknowledged as applicable.
+
+MCA-II Semester-III | BankQ - Bank Queue Management System  Page 24-25

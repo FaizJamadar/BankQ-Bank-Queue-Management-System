@@ -1,0 +1,52 @@
+I need you to write a complete academic project report document for my MCA college submission. Follow this EXACT structure and fill in all sections with real content based on the project details I give you below. Do not leave any placeholder text — write everything fully.
+
+FORMAT REQUIREMENTS:
+- Institution: D.K.T.E. Society's Textile and Engineering Institute, Ichalkaranji
+- Department: MCA
+- Degree: Master of Computer Application
+- Semester: III (MCA-II)
+- Academic Year: 2026-2027
+- Student 1: Mr. Faiz Jamadar, Roll No. 25PMC028
+- Student 2: Mr. Aman Rashid Gavandi, Roll No. 25PMC029
+- Guide: Prof. Pratiksha
+- HOD: Dr. Ghat
+
+PROJECT DETAILS:
+- Title: BankQ — Bank Queue Management System with AI Chatbot
+- Tech Stack: FastAPI (Python) backend on port 9000, React + Vite + Tailwind CSS frontend on port 5173, MySQL database
+- AI Used: Groq AI API, model openai/gpt-oss-20b, accessed via httpx HTTP POST, free tier
+- AI Purpose: Floating chatbot that answers BankQ and banking-related customer queries using a system prompt
+- System Prompt used: "You are BankQ Assistant, a helpful chatbot for BankQ — a bank queue management system. The bank offers: Cash Deposit, Cash Withdrawal, Loan Inquiry, Account Opening, Demand Draft. Branches in Bangalore, Delhi, Mumbai. Customers book slots online (9AM–5PM, 30-min slots) and check in with a 4-digit PIN at the kiosk. ONLY answer BankQ and banking related questions. If asked anything unrelated, politely say you can only help with BankQ topics. Be short and friendly."
+- Features: Online slot booking, 4-digit PIN kiosk check-in, real-time queue tracking via WebSockets, teller dashboard (call next / complete), My Appointments page, AI chatbot floating bubble
+- Database tables: users, branches, services, counters, appointments, bank_accounts
+- Roles: CUSTOMER, TELLER, SECURITY, ADMIN
+- Authentication: JWT tokens, bcrypt password hashing via passlib
+- Services offered: Cash Deposit, Cash Withdrawal, Loan Inquiry, Account Opening, Demand Draft
+- Branches: Bangalore, Delhi, Mumbai
+- Registration requires last 4 digits of bank account for verification
+
+DOCUMENT STRUCTURE TO FOLLOW (write all chapters fully):
+1. Title Page
+2. Certificate (signed by Guide and HOD)
+3. Guide's Certificate
+4. Student Declaration
+5. Acknowledgement
+6. Abstract (200-300 words)
+7. Table of Contents
+8. List of Figures
+9. List of Tables
+10. Abbreviations and Terminology
+11. Chapter 1: Introduction (1.1 to 1.7)
+12. Chapter 2: Existing System and Problem Analysis (2.1 to 2.7 including comparative analysis table)
+13. Chapter 3: Proposed System (3.1 to 3.9 including module description table and feasibility study)
+14. Chapter 4: Generative AI Components Used (4.1 to 4.9 — this is the most important chapter, explain Groq AI, prompt engineering, workflow, responsible AI)
+15. Chapter 5: System Analysis and Design (5.1 to 5.7 including architecture, use case, DFD, database design)
+16. Chapter 6: Hardware and Software Requirements (tables for hardware and software with actual versions)
+17. Chapter 7: Implementation (7.1 to 7.10 including actual code snippet for the /ai/chat endpoint)
+18. Chapter 8: Testing and Results (test cases table with 15 test cases, AI output evaluation)
+19. Chapter 9: Scope, Limitations and Future Enhancements
+20. Chapter 10: Conclusion
+21. Bibliography / References (at least 8 real references)
+22. Appendices (A through I — include prompt library, user manual, AI usage disclosure)
+
+Write the entire document now, fully, with no placeholders. Every section must have real content based on the project details above.

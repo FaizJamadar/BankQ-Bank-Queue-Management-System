@@ -1,0 +1,263 @@
+BANKQ — BANK QUEUE MANAGEMENT SYSTEM
+Project Synopsis Presentation
+================================================================================
+
+
+SLIDE 1 — TITLE
+--------------------------------------------------------------------------------
+BankQ
+Bank Queue Management System
+
+Eliminating physical queues through smart digital slot booking,
+real-time token tracking, and live queue management.
+
+[Your Name] | [College Name] | [Year]
+
+
+SLIDE 2 — PROBLEM STATEMENT
+--------------------------------------------------------------------------------
+The Problem with Traditional Bank Queues
+
+Customers wait 30 to 90 minutes without knowing their turn.
+No way to plan visits in advance.
+Overcrowding during peak hours causes chaos.
+No real-time visibility for staff or customers.
+Manual token systems are error-prone and inefficient.
+
+Result: Poor customer experience and inefficient bank operations.
+
+
+SLIDE 3 — OUR SOLUTION
+--------------------------------------------------------------------------------
+BankQ — Smart Queue Management
+
+A full-stack web application that allows customers to pre-book time slots
+from home, check in at the branch using a QR code, and track their token
+status in real time on any device.
+
+Customers pre-book 30-minute time slots online.
+System auto-generates tokens like C-101 and L-102.
+QR code is scanned at the branch entrance for check-in.
+Live WebSocket dashboard shows queue status in real time.
+Teller dashboard manages customer flow at counters.
+Role-based access for all bank staff and customers.
+
+
+SLIDE 4 — KEY FEATURES
+--------------------------------------------------------------------------------
+Core Features
+
+Slot Booking — Book 30-minute slots, choose branch and service
+Token Generation — Auto tokens like C-101 and W-102 per service type
+QR Check-In — SHA-256 QR hash scanned at entrance by security
+Live Tracker — Real-time WebSocket queue dashboard for all users
+PAN Validation — Automatically triggered for deposits above 50000 rupees
+Lunch Break Guard — Slots blocked during configured branch lunch hours
+Double Booking Block — Same customer cannot book the same slot twice
+Role Based Access — Four roles: Customer, Teller, Security, and Admin
+
+
+SLIDE 5 — SYSTEM ARCHITECTURE
+--------------------------------------------------------------------------------
+System Architecture
+
+React Frontend communicates with FastAPI Backend over HTTP and WebSocket.
+FastAPI Backend connects to MySQL Database using SQLAlchemy ORM.
+WebSocket Manager maintains live connections per branch.
+
+Frontend — Vite, React 19, Tailwind CSS
+Backend — FastAPI, SQLAlchemy, PyJWT, Passlib, Uvicorn ASGI Server
+Database — MySQL 8.x with 5 tables
+Realtime — WebSocket with per-branch channels
+
+
+SLIDE 6 — TECH STACK
+--------------------------------------------------------------------------------
+Technology Stack
+
+Backend
+Python 3.11
+FastAPI 0.115
+SQLAlchemy 2.0
+MySQL 8.x with PyMySQL
+PyJWT and Passlib with bcrypt
+Pydantic v2 for validation
+Uvicorn ASGI Server
+
+Frontend
+React 19 with Vite
+Tailwind CSS 4
+React Router v7
+Axios for HTTP requests
+Lucide React for icons
+qrcode.react for QR rendering
+Native WebSocket API
+
+
+SLIDE 7 — DATABASE DESIGN
+--------------------------------------------------------------------------------
+Database — 5 Tables
+
+users
+Stores user_id, full_name, phone_number, password_hash, and role.
+
+branches
+Stores branch_id, branch_name, city, lunch_start_time, lunch_end_time.
+
+services
+Stores service_id, service_name, service_code_prefix, avg_duration_minutes.
+
+counters
+Stores counter_id, branch_id, counter_number, assigned_teller_id.
+
+appointments
+Stores appointment_id, token_number, customer_id, branch_id, service_id,
+counter_id, booking_date, slot_start_time, deposit_amount, qr_hash,
+pan_number, and status.
+
+User Roles — CUSTOMER, TELLER, SECURITY, ADMIN
+Appointment Statuses — BOOKED, CHECKED_IN, IN_PROGRESS, COMPLETED, CANCELLED
+
+
+SLIDE 8 — TOKEN LIFECYCLE
+--------------------------------------------------------------------------------
+How a Token Moves Through the System
+
+Step 1 — BOOKED
+Customer books a slot online and receives a token and QR hash.
+
+Step 2 — CHECKED_IN
+Security guard scans the QR code at the branch entrance.
+
+Step 3 — IN_PROGRESS
+Teller calls the next token from the dashboard.
+
+Step 4 — COMPLETED
+Teller marks the service as done after serving the customer.
+
+CANCELLED — Can happen at any point before IN_PROGRESS.
+
+Every status change instantly broadcasts a live WebSocket event
+to all clients watching that branch.
+
+
+SLIDE 9 — APPLICATION VIEWS
+--------------------------------------------------------------------------------
+5 Application Views
+
+Auth Page
+Tabbed Login and Register form for all roles.
+JWT token stored locally with role-based redirect after login.
+
+Book Slot
+Select Branch, Service, Date, and 30-minute Time Slot.
+PAN number field automatically appears if deposit exceeds 50000 rupees.
+
+Live Tracker
+WebSocket dashboard showing Now Serving token, queue count,
+estimated wait time, QR code display, and live event feed.
+
+Kiosk Scanner
+Security guard view to paste or scan QR hash for customer check-in.
+Keeps a history log of last 10 scans with timestamps.
+
+Teller Dashboard
+Call Next Token and Mark Complete buttons with large token display.
+Branch and counter selector with counter active toggle.
+
+
+SLIDE 10 — REAL-TIME WEBSOCKET FLOW
+--------------------------------------------------------------------------------
+Real-Time Queue Broadcasting
+
+WebSocket connects to the server at ws://server/ws/queue/{branch_id}
+
+Customer books a slot and receives Token C-101 and a QR Hash.
+
+Security scans QR at entrance.
+Backend updates status to CHECKED_IN.
+Broadcasts event CHECKED_IN with token C-101 to all watchers.
+
+Teller clicks Call Next Token.
+Backend updates status to IN_PROGRESS.
+Broadcasts event CALLED with token C-101 and counter number.
+
+Teller clicks Mark Complete.
+Backend updates status to COMPLETED.
+Broadcasts event COMPLETED with token C-101.
+
+All connected clients on that branch receive every event instantly.
+Multiple branches run completely independent WebSocket channels.
+
+
+SLIDE 11 — SECURITY IMPLEMENTATION
+--------------------------------------------------------------------------------
+Security Features
+
+Authentication — JWT Bearer tokens using HS256 algorithm with 60 minute expiry.
+Passwords — bcrypt hashing with unique salt per user, one-way irreversible.
+Authorization — Role-based guards enforced on every protected API endpoint.
+PAN Compliance — RBI regulation enforced, PAN required for deposits above 50000.
+QR Security — SHA-256 hash generated from customer ID, branch, slot, and date.
+Double Check-In Prevention — QR can only be verified once when status is BOOKED.
+Input Validation — Pydantic v2 schema validation on all incoming API requests.
+
+
+SLIDE 12 — PROJECT MODULES
+--------------------------------------------------------------------------------
+Project Modules
+
+Module 1 — Authentication and User Management
+User registration, login, JWT generation, and role assignment.
+
+Module 2 — Slot Booking Engine
+Branch and service selection, 30-minute time slots, PAN validation,
+double-booking prevention, and lunch break slot blocking.
+
+Module 3 — QR Check-In System
+QR hash generation on booking, kiosk verification by security,
+and status update to CHECKED_IN.
+
+Module 4 — Teller Queue Management
+Call next waiting customer, mark service complete, counter assignment.
+
+Module 5 — Real-Time Broadcasting
+WebSocket connection manager, per-branch live channels,
+event feed with estimated wait time calculation.
+
+
+SLIDE 13 — FUTURE ENHANCEMENTS
+--------------------------------------------------------------------------------
+Future Scope
+
+SMS and WhatsApp notifications when token is about to be called.
+Mobile application using React Native for customers.
+Admin analytics dashboard showing peak hours and average wait times.
+Multi-branch admin panel with staff scheduling and management.
+Appointment rescheduling and cancellation by customers.
+Digital display board integration for branch screens.
+Payment gateway integration for service fees.
+AI-based slot demand prediction and auto-scheduling.
+
+
+SLIDE 14 — CONCLUSION
+--------------------------------------------------------------------------------
+Conclusion
+
+BankQ successfully digitizes the bank queue experience.
+
+Eliminates physical waiting with pre-booked time slots.
+Provides real-time visibility to both customers and staff.
+Enforces regulatory compliance with PAN validation for large deposits.
+Enables role-based operations across all bank staff.
+Delivers a scalable, secure, and modern full-stack web application.
+
+Built with industry-standard technologies:
+FastAPI, React, MySQL, and WebSockets.
+
+Thank You
+
+
+================================================================================
+END OF PRESENTATION CONTENT — BANKQ v1.0
+================================================================================

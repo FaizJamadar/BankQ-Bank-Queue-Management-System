@@ -1,0 +1,683 @@
+PAGE 1
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+D.K.T.E. SOCIETY’S TEXTILE AND ENGINEERING
+INSTITUTE, ICHALKARANJI
+(An Empowered Autonomous Institute, Affiliated to Shivaji University, Kolhapur)
+DEPARTMENT OF MCA
+A PROJECT REPORT ENTITLED
+ON
+[PROJECT TITLE]
+SUBMITTED IN PARTIAL FULFILLMENT OF THE REQUIREMENTS FOR THE
+DEGREE OF MASTER OF COMPUTER APPLICATION
+BY
+[Mr./Ms. Student Name]
+[Mr./Ms. Student Name]
+UNDER THE GUIDANCE OF
+Mr./Ms. [Guide Name]
+THROUGH THE DIRECTOR
+D.K.T.E. S’s TEXTILE AND ENGINEERING INSTITUTE,
+ICHALKARANJI – 416115
+ACADEMIC YEAR: 2026–2027
+MCA-II Semester-III | [Project Title] • Page 1
+PAGE 2
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CERTIFICATE
+This is to certify that the project report entitled “[PROJECT TITLE]” is a record of the project
+work carried out by Mr./Ms. [Student Name] and Mr./Ms. [Student Name] in partial
+fulfillment of the requirements for the degree of Master of Computer Application, Semester
+[Semester], at D.K.T.E. Society’s Textile and Engineering Institute, Ichalkaranji.
+The project work was carried out under the guidance of Mr./Ms. [Project Guide Name] and
+is submitted in accordance with the academic requirements of the institute for the
+academic year 2026–2027.
+The report has been reviewed for academic submission. The student details, project title,
+semester, and academic year should be completed and verified before the certificate is
+signed.
+Project Guide Head of the Department
+Name: __________________________
+Name: __________________________
+Signature: ______________________ Signature: ______________________
+Date: ___________________________ Date: ___________________________
+Examiner 1: __________________________ Examiner 2: __________________________
+Place: Ichalkaranji
+MCA-II Semester-III | [Project Title] • Page 2
+PAGE 3
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+GUIDE’S CERTIFICATE
+I hereby certify that the project entitled “[PROJECT TITLE]” has been developed by [Student
+Name(s)] under my guidance.
+The student(s) have undertaken the project work, studied the relevant concepts of
+Generative Artificial Intelligence, implemented the proposed solution, and prepared the
+accompanying documentation.
+The work has been reviewed by me and is submitted for academic evaluation. The project
+has been carried out under my supervision, subject to the institute’s applicable academic
+integrity requirements.
+Project Guide
+Name: __________________________________________
+Designation: _____________________________________
+Signature: _______________________________________
+Date: ____________________________________________
+MCA-II Semester-III | [Project Title] • Page 3
+PAGE 4
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+STUDENT DECLARATION
+To,
+The Registrar,
+Shivaji University, Kolhapur.
+We, the undersigned, hereby declare that the project report entitled “[PROJECT TITLE]”,
+submitted under the guidance of Mr./Ms. [Guide Name] is our original work carried out as
+part of the Master of Computer Application programme at D.K.T.E. Society’s Textile and
+Engineering Institute, Ichalkaranji.
+We further declare that the empirical findings and results presented in this report are based
+on the work and information collected by us. We have not copied this report from another
+report submitted to Shivaji University, Kolhapur. All external sources, software libraries,
+datasets, APIs, and Generative AI tools used have been acknowledged. Any AI-generated
+content or code has been reviewed and verified by us, in accordance with applicable
+academic-integrity requirements.
+We understand that plagiarism or misrepresentation may be dealt with under the applicable
+university and institute rules.
+1. The project has been developed by us under the guidance of the assigned project guide.
+2. The information, results, screenshots, and observations presented in this report are
+accurate to the best of our knowledge.
+3. All external sources, research papers, software libraries, datasets, APIs, and AI tools used
+in the project have been appropriately acknowledged.
+4. The use of Generative AI tools, including AI-generated code, content, images, or other
+outputs, has been disclosed wherever applicable.
+5. We have not knowingly presented another person’s work as our own.
+6. This project has not been submitted elsewhere for academic evaluation unless explicitly
+permitted by the institute.
+Student Name(s): __________________________________________
+Roll Number(s): ___________________________________________
+Signature(s): _____________________________________________
+MCA-II Semester-III | [Project Title] • Page 4
+PAGE 5
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+Date: ____________________________________________________
+ACKNOWLEDGEMENT
+We have been fortunate to receive assistance, suggestions, and support from our project
+guide, faculty members, friends, and the institute during the development of our project
+entitled “[PROJECT TITLE]”.
+First and foremost, we express our sincere gratitude to our respected project guide, Mr./Ms.
+[Guide Name], for valuable guidance, constructive suggestions, and kind support
+throughout the project work.
+We take this opportunity to thank the Head of the Department, all teaching and non-
+teaching staff members, and our friends for their cooperation and encouragement.
+We also sincerely thank the staff of the computer laboratory for their cooperation and for
+providing the facilities required to complete the project within the available time.
+We acknowledge the developers and providers of software tools, Generative AI models,
+libraries, APIs, datasets, and technical resources used in the project, wherever applicable.
+Mr./Ms. [Student Name(s)]
+Mr./Ms. [Student Name(s)]
+MCA-II Semester-III | [Project Title] • Page 5
+PAGE 6
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+ABSTRACT
+Recommended length: 200–300 words. Replace the sample text below with a concise description of
+your actual project.
+This project focuses on the development of [brief description of the application] using
+Generative Artificial Intelligence.
+The existing approach to [problem area] faces challenges such as [identify major
+challenges]. To address these issues, the proposed system uses [AI model or technique] to
+provide [main functionality].
+The application is developed using [programming language, framework, database, and other
+technologies]. The Generative AI component is used for [specific task, such as text
+generation, question answering, summarization, code assistance, or image generation].
+The system provides features such as [list the major features]. The project is evaluated
+through functional testing and relevant performance measures.
+The proposed application aims to improve [efficiency, accessibility, personalization,
+productivity, or another relevant objective]. The project also identifies limitations and
+opportunities for future enhancement.
+MCA-II Semester-III | [Project Title] • Page 6
+PAGE 7
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+TABLE OF CONTENTS
+Sr. No. Contents Page No.
+1 Chapter 1: Introduction 11
+2 Chapter 2: Existing System and Problem Analysis 12
+3 Chapter 3: Proposed System 13
+4 Chapter 4: Generative AI Components Used 15
+5 Chapter 5: System Analysis and Design 17
+6 Chapter 6: Hardware and Software Requirements 18
+7 Chapter 7: Implementation 19
+8 Chapter 8: Testing and Results 20
+9 Chapter 9: Scope, Limitations and Future Enhancements 21
+10 Chapter 10: Conclusion 22
+11 Bibliography / References 23
+12 Appendices 24
+Update the page-number column after completing the report. In Microsoft Word, an automatic Table
+of Contents can be inserted from References > Table of Contents
+LIST OF FIGURES
+MCA-II Semester-III | [Project Title] • Page 7
+PAGE 8
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+Figure No. Figure Title Page No.
+Fig. 5.1 System Architecture 17
+Fig. 5.2 Use Case Diagram 17
+Fig. 5.3 Data Flow Diagram 17
+Fig. 5.4 Activity / Sequence Diagram 17
+Fig. 7.1 Application Home Screen 19
+Fig. 7.2 AI Output Screen 19
+Fig. 8.1 Testing Results 20
+Keep only figures that actually appear in the final report.
+MCA-II Semester-III | [Project Title] • Page 8
+PAGE 9
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+LIST OF TABLES
+Table No. Table Title Page No.
+Table 2.1 Existing System Analysis 12
+Table 3.1 Proposed System Features 13
+Table 4.1 Generative AI Components 15
+Table 6.1 Hardware Requirements 18
+Table 6.2 Software Requirements 18
+Table 8.1 Test Cases and Results 20
+MCA-II Semester-III | [Project Title] • Page 9
+PAGE 10
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+ABBREVIATIONS AND TERMINOLOGY
+Abbreviation Full Form / Meaning
+AI Artificial Intelligence
+GenAI Generative Artificial Intelligence
+LLM Large Language Model
+NLP Natural Language Processing
+API Application Programming Interface
+RAG Retrieval-Augmented Generation
+UI User Interface
+UX User Experience
+DBMS Database Management System
+SQL Structured Query Language
+JSON JavaScript Object Notation
+GPU Graphics Processing Unit
+Add only terms relevant to your project.
+MCA-II Semester-III | [Project Title] • Page 10
+PAGE 11
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 1: INTRODUCTION
+1.1 Introduction to the Project
+Describe the project domain, the problem area, and why the project is being
+developed.
+1.2 Background of the Project
+Describe the existing situation, relevant technologies, and developments in
+Generative AI that make the project feasible.
+1.3 Motivation
+Explain why the project was selected. Possible motivations include automation
+of repetitive tasks, improved productivity, intelligent assistance, personalized
+learning, or better information accessibility.
+1.4 Problem Statement
+Suggested format: “To design and develop a [type of application] using
+Generative Artificial Intelligence to address [specific problem] by providing
+[key functionality] to [target users].”
+1.5 Objectives of the Project
+7. To study existing methods used to solve the selected problem.
+8. To design a user-friendly application.
+9. To integrate a suitable Generative AI model or service.
+10.To implement the major functional modules.
+11.To evaluate the usefulness and performance of the application using
+appropriate tests.
+12.To identify system limitations and opportunities for improvement.
+1.6 Scope of the Project
+Define the intended users, application domain, main features, AI capabilities,
+supported platforms, and boundaries of the implementation.
+1.7 Organization of the Report
+Briefly describe the contents of each chapter.
+MCA-II Semester-III | [Project Title] • Page 11
+PAGE 12
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 2: EXISTING SYSTEM AND PROBLEM
+ANALYSIS
+2.1 Overview of the Existing System
+Describe the current method, manual process, software, or application used to
+address the problem.
+2.2 Working of the Existing System
+Explain the process step by step. Add a flowchart if appropriate.
+2.3 Limitations of the Existing System
+Discuss actual limitations such as manual effort, time-consuming operations,
+limited personalization, restricted automation, difficulty handling unstructured
+information, or lack of intelligent interaction. Do not list limitations that do not
+apply.
+2.4 Literature Review
+Review relevant research papers, technical articles, existing applications, and
+official technical documentation. For each source, record the
+author/organization, year, title, contribution, and relevance or limitation.
+2.5 Comparative Analysis
+Feature Existing System Proposed System
+User Interaction Describe current approach Describe new approach
+Automation Current capability Proposed capability
+AI Integration Existing capability, if any Proposed GenAI integration
+Personalization Existing capability Proposed capability
+Response Generation Existing method Proposed method
+Data Management Existing method Proposed method
+Limitations Identified issues Remaining limitations
+2.6 Problem Identification
+Summarize the major problems identified during the analysis.
+2.7 Need for the Proposed System
+Explain why a new solution is justified and what improvement it is expected to
+provide.
+MCA-II Semester-III | [Project Title] • Page 12
+PAGE 13
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 3: PROPOSED SYSTEM
+3.1 Introduction
+Describe the solution proposed by the project team.
+3.2 Overview of the Proposed System
+Explain how the application works and how Generative AI contributes to the
+solution.
+3.3 Proposed System Architecture
+Include a labelled architecture diagram. A typical flow may be: User → User
+Interface → Application Backend → AI Model/API → Response Processing →
+Output to User. Add database, retrieval, or external service components if
+used.
+3.4 Major Features
+Describe each implemented feature, such as user interaction, AI-generated
+responses, summarization, document processing, data storage, user feedback,
+history management, or report generation.
+3.5 Functional Requirements
+ The system shall accept user input.
+ The system shall validate required fields.
+ The system shall process requests through the configured AI component.
+ The system shall display generated output.
+ The system shall handle API errors and invalid requests.
+ The system shall save relevant information when required.
+3.6 Non-Functional Requirements
+Describe usability, reliability, performance, security, maintainability, scalability,
+accessibility, and privacy requirements.
+3.7 Module Description
+Module Description
+User Interface Accepts input and displays results.
+Input Processing Validates and prepares user input.
+Prompt Management Constructs instructions for the AI model.
+AI Integration Sends requests to the selected model or API.
+MCA-II Semester-III | [Project Title] • Page 13
+PAGE 14
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+Output Processing Formats and validates generated responses.
+Database Module Stores required application data, if applicable.
+Error Handling Handles invalid inputs, failures, and timeouts.
+3.8 Advantages of the Proposed System
+Explain expected advantages over the existing system.
+3.9 Feasibility Study
+Technical feasibility: availability of technology and skills. Economic feasibility:
+development, API, hosting, and maintenance costs. Operational feasibility:
+suitability for intended users. Schedule feasibility: completion within available
+time.
+MCA-II Semester-III | [Project Title] • Page 14
+PAGE 15
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 4: GENERATIVE ARTIFICIAL INTELLIGENCE
+COMPONENTS USED
+This chapter is essential for a Generative AI project. Explain exactly how
+Generative AI is used, rather than merely mentioning an AI tool.
+4.1 Introduction to Generative AI
+Explain Generative AI and its relevance to the selected application.
+4.2 Generative AI Model Used
+Identify the actual model or service, provider, version/model identifier where
+available, purpose, and access method. Examples include GPT-family models,
+Claude models, Gemini models, open-source language models, image-
+generation models, or locally deployed language models.
+4.3 Generative AI Components
+Component Description Use in Project
+Large Language
+Generates or transforms text Specify actual use
+Model
+Prompt Engineering Structures instructions for the model Explain prompt design
+API Integration Connects application to AI service Explain integration
+Grounds responses in retrieved
+RAG Only if implemented
+information
+Embeddings Represent content as vectors Only if used
+Vector Database Stores/retrieves vector representations Only if used
+AI Agents Select or execute tasks using tools Only if implemented
+Image Generation Generates images from prompts Only if implemented
+Speech Processing Speech-to-text or text-to-speech Only if implemented
+4.4 Prompt Engineering and Design
+Explain how prompts are designed. Consider task/role definition, context,
+input instructions, output format, constraints, and error handling.
+Example basic prompt: “Explain database normalization.”
+Example improved prompt: “Act as a database management lecturer for MCA
+students. Explain database normalization in simple English. Cover 1NF, 2NF,
+and 3NF using one common example. Present the explanation with headings, a
+comparison table, and five revision questions.”
+Include actual prompts used in your application and explain their purpose.
+MCA-II Semester-III | [Project Title] • Page 15
+PAGE 16
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+4.5 Workflow of the Generative AI Component
+13.User submits a request.
+14.The application validates the input.
+15.The application constructs the prompt.
+16.The request is sent to the AI model or service.
+17.The model generates an output.
+18.The application processes and displays the response.
+19.The user reviews the result.
+20.Relevant feedback or output is stored, if applicable.
+4.6 Model Parameters and Configuration
+Where applicable, document model identifier, temperature, maximum output
+tokens, system instructions, context-window constraints, and other model-
+specific parameters. Do not include parameters that are not configured or
+cannot be verified.
+4.7 AI Output Validation
+Explain how the application handles incorrect or irrelevant responses,
+hallucinations, inappropriate input/output, API failures, missing information,
+and the need for user verification.
+4.8 Responsible AI Considerations
+Discuss data privacy, bias and fairness, copyright and attribution, human
+oversight, misinformation, API key protection, and ethical use.
+4.9 Role of Generative AI in the Project
+Conclude by explaining which tasks genuinely depend on Generative AI and
+which are performed using conventional programming.
+MCA-II Semester-III | [Project Title] • Page 16
+PAGE 17
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 5: SYSTEM ANALYSIS AND DESIGN
+5.1 System Architecture Diagram
+Include a labelled architecture diagram showing major components and their
+interactions.
+5.2 Use Case Diagram
+Show actors and the functions they can perform.
+5.3 Data Flow Diagram (DFD)
+Include relevant DFD levels, such as Level 0 and Level 1, where appropriate.
+5.4 Flowchart
+Show the main processing sequence.
+5.5 Database Design
+If a database is used, provide the ER diagram, table structures, primary/foreign
+keys, relationships, and data dictionary. Otherwise, explain how application
+data is managed.
+5.6 Input and Output Design
+Include screenshots or mock-ups showing input and output interfaces.
+5.7 Security Design
+Explain protection of user data, API keys, authentication, and other sensitive
+information.
+MCA-II Semester-III | [Project Title] • Page 17
+PAGE 18
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 6: HARDWARE AND SOFTWARE
+REQUIREMENTS
+6.1 Hardware Requirements
+Component Minimum / Expected Requirement Actual Configuration
+Processor Suitable for selected application Specify
+RAM Sufficient to run application Specify
+Storage Sufficient free space Specify
+Display Standard supported display Specify
+Internet Required for cloud AI services Specify
+GPU Only for certain local AI workloads Specify / N.A.
+6.2 Software Requirements
+Software Component Purpose Version Used
+Operating System Runs the application Specify
+Programming Language Application development Specify
+IDE / Code Editor Writing and debugging code Specify
+Front-End Technology User interface Specify
+Back-End Framework Application logic Specify
+Database Data storage Specify / N.A.
+AI Model / API Generative AI functionality Specify
+Libraries / Packages Additional functionality Specify
+Web Browser Application access and testing Specify
+Version Control Source-code management Specify / N.A.
+6.3 Development Environment
+Describe the development tools, framework, package manager, and
+deployment environment.
+6.4 AI Service Requirements
+For a cloud AI service, document provider and model, API access requirements,
+internet connectivity, usage limits, and pricing considerations where relevant.
+Never include secret API keys, passwords, or authentication tokens.
+MCA-II Semester-III | [Project Title] • Page 18
+PAGE 19
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 7: IMPLEMENTATION
+7.1 Introduction
+Explain how the proposed system was converted into a working application.
+7.2 Project Structure
+Show the folder and file structure.
+7.3 Implementation of Modules
+Explain the implementation of each major module.
+7.4 AI Model Integration
+Describe how the application connects to the model or API. Include simplified
+code examples where necessary.
+7.5 Prompt Implementation
+Provide selected prompts and explain how they are constructed and used.
+7.6 Database Implementation
+Explain tables, queries, and data operations, if applicable.
+7.7 User Interface Implementation
+Include screenshots of the actual application with figure numbers and
+captions.
+7.8 Error Handling
+Explain handling of invalid input, network errors, model failures, and
+unexpected output.
+7.9 Deployment
+Describe how to install, configure, and run the application.
+7.10 Source Code Repository
+Provide the GitHub repository link, if applicable. Ensure no API keys,
+passwords, private datasets, or sensitive information are exposed.
+MCA-II Semester-III | [Project Title] • Page 19
+PAGE 20
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 8: TESTING AND RESULTS
+8.1 Introduction to Testing
+Explain the purpose and scope of testing.
+8.2 Testing Methodology
+Describe applicable tests, such as unit, integration, functional, UI,
+performance, AI output evaluation, and security testing.
+8.3 Test Cases
+Actual Output /
+Test ID Scenario Input Expected Output
+Status
+TC01 Valid user input Valid request Appropriate response Record result
+TC02 Empty input Blank request Validation message Record result
+AI service Error/fallback
+TC03 Valid request Record result
+unavailable message
+TC04 Long input Large request Appropriate handling Record result
+Unrelated Suitable response or
+TC05 Irrelevant query Record result
+question limitation
+8.4 AI Output Evaluation
+Describe how output quality is evaluated. Possible criteria include relevance,
+factual correctness, completeness, readability, consistency, response time, and
+user satisfaction. Use a defined test dataset and scoring rubric where possible.
+8.5 Results and Observations
+Present actual results obtained during testing. Include tables, charts, or
+screenshots where appropriate.
+8.6 Performance Analysis
+Measure relevant parameters, such as response time, resource consumption,
+or success rate. Do not report invented accuracy percentages or performance
+improvements.
+8.7 Screenshots of the Working Application
+Include labelled screenshots of the home page, input interface, AI-generated
+output, error message, database records if applicable, and final result.
+MCA-II Semester-III | [Project Title] • Page 20
+PAGE 21
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 9: SCOPE, LIMITATIONS AND FUTURE
+ENHANCEMENTS
+9.1 Scope of the Project
+Describe the intended application area and the features currently supported.
+9.2 Limitations of the Project
+Discuss actual limitations, such as dependence on third-party AI services,
+internet requirements, API usage limits or costs, inaccurate or hallucinated
+responses, limited data, language/domain restrictions, scalability, or privacy
+constraints.
+9.3 Future Enhancements
+ Integration of additional AI models.
+ Development of a mobile application.
+ Multilingual support.
+ Voice-based interaction.
+ RAG using verified documents.
+ Improved output evaluation and validation.
+ User authentication and role-based access.
+ Integration with external databases and services.
+ AI agents for controlled task automation.
+ Improved privacy and security mechanisms.
+9.4 Social and Practical Applications
+Explain how the project may benefit its intended users or application domain.
+9.5 Sustainability and Maintainability
+Discuss how the application can be maintained, updated, and operated over
+time.
+MCA-II Semester-III | [Project Title] • Page 21
+PAGE 22
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+CHAPTER 10: CONCLUSION
+10.1 Conclusion
+Summarize the problem addressed, proposed solution, Generative AI
+technologies used, major features implemented, results obtained, objectives
+achieved, and major limitations.
+10.2 Learning Outcomes
+Explain the technical and practical knowledge gained during development.
+ Understanding Generative AI concepts.
+ Applying prompt engineering.
+ Integrating an AI model or API.
+ Developing a complete application.
+ Evaluating AI-generated outputs.
+ Understanding responsible AI practices.
+ Working collaboratively on a software project.
+10.3 Final Remarks
+Conclude with a brief statement about the project’s usefulness and possible
+future development.
+MCA-II Semester-III | [Project Title] • Page 22
+PAGE 23
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+BIBLIOGRAPHY / REFERENCES
+List all sources consulted during the project, including research papers, books,
+official AI model documentation, API documentation, software documentation,
+dataset documentation, reputable technical articles, and official project
+repositories.
+Recommended reference formats
+Research paper: Author(s), “Title of the Paper,” Journal or Conference Name,
+volume, issue, page numbers, year, DOI or other persistent identifier.
+Book: Author(s), Title of the Book, edition, publisher, year.
+Website or official documentation: Organization or author, “Title of the Page
+or Documentation,” publication/update date if available, URL, accessed date.
+Software library or model: Developer or organization, model/library name,
+version or identifier, official documentation or repository, accessed date where
+relevant.
+Reference list
+[1] [Author / Organization]. “[Title of source].” [Publisher / Journal / Official
+documentation]. [Year]. [DOI or URL]. [Accessed date, if applicable].
+[2] [Author / Organization]. “[Title of source].” [Publisher / Journal / Official
+documentation]. [Year]. [DOI or URL]. [Accessed date, if applicable].
+[3] [Author / Organization]. “[Title of source].” [Publisher / Journal / Official
+documentation]. [Year]. [DOI or URL]. [Accessed date, if applicable].
+[4] [Author / Organization]. “[Title of source].” [Publisher / Journal / Official
+documentation]. [Year]. [DOI or URL]. [Accessed date, if applicable].
+[5] [Author / Organization]. “[Title of source].” [Publisher / Journal / Official
+documentation]. [Year]. [DOI or URL]. [Accessed date, if applicable].
+[6] [Author / Organization]. “[Title of source].” [Publisher / Journal / Official
+documentation]. [Year]. [DOI or URL]. [Accessed date, if applicable].
+Use one consistent referencing style. Include only sources actually consulted. Do not fabricate papers,
+authors, DOIs, or URLs. A sample reference format is not a substitute for a real citation.
+MCA-II Semester-III | [Project Title] • Page 23
+PAGE 24
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+APPENDICES
+Appendix A: Source Code
+Include important code snippets or provide the repository reference. Keep
+credentials and private information out of the report.
+Appendix B: Prompt Library
+Include important prompts used in the project, along with their purpose,
+inputs, and representative outputs.
+Appendix C: Sample Input and Output
+Provide representative examples of user inputs and generated outputs.
+Identify any output that has been edited or post-processed.
+Appendix D: User Manual
+Explain how to install, configure, and use the application.
+Appendix E: Installation and Deployment Guide
+Provide setup instructions, dependencies, configuration steps, and execution
+commands.
+Appendix F: Test Results
+Include detailed test cases and supporting evidence.
+Appendix G: Dataset Description
+Describe dataset source, format, size, preprocessing, permissions, and relevant
+privacy considerations.
+Appendix H: Additional Screenshots
+Include screenshots that support the explanation but are not essential to the
+main chapters.
+Appendix I: AI Usage Disclosure
+Suggested wording: “Generative AI tools were used during the development of
+this project for [specify tasks]. The project team reviewed, tested, and verified
+the relevant outputs. The final implementation, evaluation, and
+MCA-II Semester-III | [Project Title] • Page 24
+PAGE 25
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+documentation were checked by the team, and external sources have been
+acknowledged as applicable.”
+Modify this statement to reflect the actual use of AI tools and the institute’s academic-integrity
+policy.
+MCA-II Semester-III | [Project Title] • Page 25
+PAGE 26
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+APPENDIX J: RECOMMENDED FORMATTING
+GUIDELINES
+Parameter Recommended Format
+Paper Size A4
+Font Times New Roman or another approved academic font
+Main / Chapter Heading 16–17 pt, bold
+Section Heading 13 pt, bold
+Body Text 11–12 pt
+Line Spacing 1.5, if required by the department
+Alignment Justified for body text
+Left Margin 1.5 inches, if prescribed
+Right / Top / Bottom Margin 1 inch, if prescribed
+Preliminary Page Numbering Roman numerals, if prescribed
+Main Chapter Numbering Arabic numerals
+Figure Captions Below figures
+Table Captions Above tables
+Code Formatting Monospaced font with readable indentation
+References One consistent academic style
+Start each main chapter on a new page. The institute’s prescribed format takes
+precedence over these recommendations.
+MCA-II Semester-III | [Project Title] • Page 26
+PAGE 27
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+APPENDIX K: FINAL SUBMISSION CHECKLIST
+A. Documentation
+Title page contains all required details.
+Certificates are completed and signed where required.
+Student declaration is included.
+Abstract is complete.
+Table of contents matches final page numbers.
+Figures and tables are numbered correctly.
+All chapters are arranged in the prescribed order.
+B. Generative AI Implementation
+The AI model or service is identified.
+The role of Generative AI is clearly explained.
+Actual prompts are documented.
+System architecture includes the AI component.
+AI-generated outputs have been tested.
+Limitations and responsible AI considerations are documented.
+External sources and AI tools are acknowledged.
+C. Technical Implementation
+Hardware requirements are specified.
+Software requirements and versions are documented.
+Major modules are explained.
+Screenshots show the working application.
+Test cases and actual results are included.
+Source code or repository details are provided, where applicable.
+Setup and execution instructions are included.
+D. Academic Integrity
+External content is properly cited.
+No fabricated test results are included.
+AI-generated material has been reviewed and verified.
+The student can explain the implementation.
+No passwords, API keys, or confidential information appear in the report.
+E. Final Submission
+The report follows the prescribed formatting.
+Page numbers and headings are consistent.
+The final report is proofread.
+Required digital files are submitted.
+The working application and demonstration are ready.
+MCA-II Semester-III | [Project Title] • Page 27
+PAGE 28
+DKTE SOCIETY’S TEXTILE & ENGINEERING INSTITUTE, ICHALKARANJI
+DEPARTMENTAL RECOMMENDATION
+For Generative AI projects, the following four components are recommended
+as compulsory additions to conventional software project documentation:
+ Generative AI Component Analysis: explain the model, prompting
+strategy, API integration, and actual role of AI.
+ Prompt Engineering Evidence: document representative prompts,
+input/output examples, and prompt refinements.
+ AI Evaluation and Responsible AI: demonstrate output-quality testing
+and address hallucinations, privacy, and relevant risks.
+ Working Application Evidence: submit screenshots, test results,
+repository details where applicable, and instructions to run the project.
+Recommended final submission: one properly formatted PDF report, the
+working application, source code or repository link, a prompt documentation
+appendix, and supporting test evidence.
+This is a recommended departmental template. Institute-prescribed project-report formats,
+examination rules, and academic-integrity policies take precedence.
+MCA-II Semester-III | [Project Title] • Page 28

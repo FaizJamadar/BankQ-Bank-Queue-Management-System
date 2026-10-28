@@ -1,0 +1,305 @@
+
+================================================================================
+  BANKQ — COMPLETE FLOW & WORKING GUIDE
+================================================================================
+
+--------------------------------------------------------------------------------
+1. THE BIG PICTURE
+--------------------------------------------------------------------------------
+
+BankQ works exactly like a token system at a real bank, but digital:
+
+  CUSTOMER  →  Books a slot online  →  Gets Token (C-101) + QR Code
+  CUSTOMER  →  Arrives at bank      →  Security scans QR at entrance
+  SECURITY  →  Scans QR             →  Customer is CHECKED IN
+  TELLER    →  Calls next token     →  Customer goes to counter
+  TELLER    →  Marks complete       →  Next customer is called
+  EVERYONE  →  Watches Live Tracker →  Sees all updates in real time
+
+No physical waiting in line. No confusion about whose turn it is.
+Everything is visible on screen, live.
+
+--------------------------------------------------------------------------------
+2. THE 5 ROLES & WHAT THEY DO
+--------------------------------------------------------------------------------
+
+  CUSTOMER   Books slots, gets tokens, tracks queue, shows QR at entrance
+  TELLER     Calls next customer, marks service done, manages their counter
+  SECURITY   Scans QR codes at branch entrance to check customers in
+  ADMIN      Has access to everything — all views, all actions
+
+  TEST CREDENTIALS (use these to login)
+  ----------------------------------------
+  Role        Phone         Password
+  --------    ----------    -------------
+  CUSTOMER    9876543210    Customer@123   (Ravi Kumar)
+  CUSTOMER    9876543211    Customer@123   (Anita Desai)
+  CUSTOMER    9876543212    Customer@123   (Suresh Nair)
+  CUSTOMER    9876543213    Customer@123   (Meena Pillai)
+  CUSTOMER    9876543214    Customer@123   (Arjun Mehta)
+  TELLER      9000000002    Teller@123     (Priya Sharma)
+  TELLER      9000000003    Teller@123     (Karan Teller)
+  SECURITY    9000000004    Security@123   (Ramesh Guard)
+  ADMIN       9000000001    Admin@123      (Admin User)
+
+--------------------------------------------------------------------------------
+3. TOKEN LIFECYCLE — HOW A TOKEN MOVES
+--------------------------------------------------------------------------------
+
+  Every appointment has a STATUS that moves in one direction:
+
+  BOOKED  ──►  CHECKED_IN  ──►  IN_PROGRESS  ──►  COMPLETED
+                                                        │
+                              CANCELLED ◄──────────────┘
+                              (can cancel before IN_PROGRESS)
+
+  BOOKED       Customer booked the slot online. Not yet at the bank.
+  CHECKED_IN   Security scanned the QR at entrance. Customer is inside.
+  IN_PROGRESS  Teller called this token. Customer is at the counter.
+  COMPLETED    Service done. Teller marked it complete.
+  CANCELLED    Appointment was cancelled before service started.
+
+  Token format:  {ServicePrefix}-{Number}
+  Examples:
+    C-101  →  Cash Deposit (C), first token of the day
+    W-101  →  Cash Withdrawal
+    L-101  →  Loan Inquiry
+    A-101  →  Account Opening
+    D-101  →  Demand Draft
+
+--------------------------------------------------------------------------------
+4. COMPLETE STEP-BY-STEP FLOW
+--------------------------------------------------------------------------------
+
+  STEP 1 — CUSTOMER BOOKS A SLOT
+  --------------------------------
+  1. Open http://localhost:5173
+  2. Click Login → enter phone 9876543210, password Customer@123
+  3. You land on the Book Slot page
+  4. Fill in the form:
+       Branch   → MG Road Main Branch (Bangalore)
+       Service  → Cash Deposit
+       Date     → Today's date
+       Time     → Pick any slot e.g. 9:00 AM
+  5. If deposit amount > ₹50,000 → PAN field appears (required)
+  6. Click Confirm Booking
+  7. You receive:
+       Token   : C-101
+       QR Hash : a3f9c2d1e4b7... (64-character code)
+  8. COPY the QR Hash — you will need it at the kiosk
+
+  STEP 2 — OPEN LIVE TRACKER (keep this open the whole time)
+  ------------------------------------------------------------
+  1. Open a NEW browser tab
+  2. Go to http://localhost:5173/track
+  3. Select Branch → MG Road Main Branch
+  4. You are now connected via WebSocket (green "Live" badge appears)
+  5. Paste your QR Hash in the "Your Entry QR Code" box
+  6. A QR code image renders — this is what you show at the entrance
+  7. Keep this tab open and watch it update as actions happen
+
+  STEP 3 — SECURITY CHECKS IN THE CUSTOMER (Kiosk)
+  --------------------------------------------------
+  1. Open a NEW browser tab
+  2. Go to http://localhost:5173/auth
+  3. Login as Security: phone 9000000004, password Security@123
+  4. You land on Kiosk Scanner page
+  5. Paste the QR Hash from Step 1 into the input box
+  6. Press Enter or click Verify
+  7. You see: ✅ Check-in successful — Token C-101
+  8. NOW switch to the Live Tracker tab
+     → You will see this appear instantly in the feed:
+       [ CHECKED_IN ]  C-101
+
+  STEP 4 — TELLER CALLS THE CUSTOMER
+  ------------------------------------
+  1. Open a NEW browser tab
+  2. Go to http://localhost:5173/auth
+  3. Login as Teller: phone 9000000002, password Teller@123
+  4. You land on Teller Dashboard
+  5. Select Branch → MG Road Main Branch
+  6. Select Counter → Counter 1
+  7. Make sure Counter Status toggle is ON (green)
+  8. Click "Call Next Token"
+  9. Dashboard shows: Currently Serving → C-101
+  10. NOW switch to the Live Tracker tab
+      → You will see:
+        [ CALLED ]  C-101  → Counter 1
+
+  STEP 5 — TELLER MARKS SERVICE COMPLETE
+  ----------------------------------------
+  1. Back in the Teller Dashboard tab
+  2. Click "Mark Complete"
+  3. Currently Serving resets to —
+  4. Switch to Live Tracker tab
+     → You will see:
+       [ COMPLETED ]  C-101
+
+  That's one full cycle done. The teller can now call the next
+  CHECKED_IN customer by clicking "Call Next Token" again.
+
+--------------------------------------------------------------------------------
+5. WHAT EACH PAGE DOES
+--------------------------------------------------------------------------------
+
+  /auth  —  Auth Page (Login / Register)
+  ----------------------------------------
+  Two tabs: Login and Register
+  Login uses phone number as username + password
+  After login, you are redirected based on your role:
+    CUSTOMER  →  /book
+    TELLER    →  /teller
+    SECURITY  →  /kiosk
+    ADMIN     →  /teller
+
+  /book  —  Book Slot (CUSTOMER, ADMIN)
+  ---------------------------------------
+  Select Branch, Service, Date, Time Slot (30-min intervals, 9AM–5PM)
+  Lunch break slots (1:00 PM, 1:30 PM) are blocked
+  If deposit > ₹50,000 → PAN number field appears and is required
+  On success → shows Token number and QR Hash
+  Double booking is prevented (same customer, branch, date, slot)
+
+  /track  —  Live Tracker (CUSTOMER, ADMIN)
+  ------------------------------------------
+  Select a branch to connect via WebSocket
+  Shows 3 live stats:
+    Now Serving  →  current token being served
+    Waiting      →  number of checked-in customers
+    Est. Wait    →  estimated wait time in minutes
+  Paste your QR Hash to see your queue position and a QR code image
+  Live Event Feed shows last 20 events with timestamps
+  Events: CHECKED_IN (green), CALLED (blue), COMPLETED (grey)
+
+  /kiosk  —  Kiosk Scanner (SECURITY, ADMIN)
+  --------------------------------------------
+  Input box for QR Hash (works with barcode scanners too — press Enter)
+  Shows ✅ success or ❌ error with reason
+  Keeps a history of last 10 scans with timestamps
+  Only works on BOOKED appointments (prevents double check-in)
+
+  /teller  —  Teller Dashboard (TELLER, ADMIN)
+  ----------------------------------------------
+  Select Branch and Counter
+  Counter Status toggle — ON means accepting customers
+  "Call Next Token" — pulls the oldest CHECKED_IN customer
+    (ordered by slot time, then appointment ID — first booked, first served)
+  "Mark Complete" — marks current token as COMPLETED
+  Currently Serving display shows active token in large text
+
+--------------------------------------------------------------------------------
+6. REAL-TIME WEBSOCKET — HOW IT WORKS
+--------------------------------------------------------------------------------
+
+  The Live Tracker connects to:
+    ws://localhost:9000/ws/queue/{branch_id}
+
+  Every time a status changes via the API, the backend broadcasts
+  a JSON event to ALL connected clients watching that branch:
+
+  On CHECKED_IN (kiosk verify):
+    { "event": "CHECKED_IN", "token": "C-101", "appointment_id": 1 }
+
+  On CALLED (teller call-next):
+    { "event": "CALLED", "token": "C-101", "counter": 1, "appointment_id": 1 }
+
+  On COMPLETED (teller complete):
+    { "event": "COMPLETED", "token": "C-101", "appointment_id": 1 }
+
+  Multiple people can watch the same branch simultaneously.
+  All of them receive the same events at the same time.
+  This is why opening 4 tabs and doing the flow shows everything live.
+
+--------------------------------------------------------------------------------
+7. RECOMMENDED 4-TAB TEST SETUP
+--------------------------------------------------------------------------------
+
+  Open these 4 tabs side by side in your browser:
+
+  TAB 1  →  http://localhost:5173/book
+             Login: 9876543210 / Customer@123
+             Action: Book a slot, copy the QR hash
+
+  TAB 2  →  http://localhost:5173/track
+             Login: same customer or admin
+             Action: Select branch, paste QR hash, watch live feed
+
+  TAB 3  →  http://localhost:5173/kiosk
+             Login: 9000000004 / Security@123
+             Action: Paste QR hash, click Verify
+
+  TAB 4  →  http://localhost:5173/teller
+             Login: 9000000002 / Teller@123
+             Action: Select branch+counter, Call Next, Mark Complete
+
+  Do actions in order: Tab1 → Tab3 → Tab4
+  Watch Tab2 update live after each action.
+
+--------------------------------------------------------------------------------
+8. API ENDPOINTS QUICK REFERENCE
+--------------------------------------------------------------------------------
+
+  All endpoints are also testable at: http://localhost:9000/docs
+
+  POST  /auth/register          Create a new user account
+  POST  /auth/login             Get JWT token (use phone as username)
+  GET   /branches               List all branches
+  GET   /services               List all services
+  GET   /counters?branch_id=1   List counters for a branch
+  POST  /appointments/book      Book a slot (CUSTOMER only)
+  POST  /kiosk/verify           Check in via QR hash (SECURITY/ADMIN)
+  POST  /teller/call-next       Call next CHECKED_IN token (TELLER/ADMIN)
+  POST  /teller/complete        Mark token as COMPLETED (TELLER/ADMIN)
+  WS    /ws/queue/{branch_id}   WebSocket live event stream
+
+--------------------------------------------------------------------------------
+9. COMMON QUESTIONS
+--------------------------------------------------------------------------------
+
+  Q: Why is the Live Tracker feed empty when I open it?
+  A: It only shows events that happen AFTER you connect. Past events
+     (like the seeded dummy data) don't appear. Do the 4-tab test
+     to see it work live.
+
+  Q: Why can't I book the same slot twice?
+  A: Double-booking is blocked. Same customer + branch + date + time
+     will return a 409 Conflict error.
+
+  Q: Why is the 1:00 PM and 1:30 PM slot missing?
+  A: That's the lunch break. Branches have a 1-hour lunch window
+     configured (1:00 PM - 2:00 PM for most branches).
+
+  Q: What happens if I scan a QR that's already CHECKED_IN?
+  A: The kiosk returns an error: "Token already in status: CHECKED_IN"
+     Prevents customers from checking in twice.
+
+  Q: Can multiple tellers work at the same time?
+  A: Yes. Each teller selects their own counter. Call Next always
+     picks the oldest waiting customer regardless of which teller calls.
+
+  Q: What does the PAN field do?
+  A: RBI regulation — any cash deposit above ₹50,000 requires a PAN
+     number. The field only appears when deposit amount exceeds that.
+     Format must be: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)
+
+--------------------------------------------------------------------------------
+10. HOW TO START THE SYSTEM
+--------------------------------------------------------------------------------
+
+  Every time you want to run BankQ, open 2 terminals in VS Code (Ctrl+`)
+
+  TERMINAL 1 — Backend:
+    cd "d:\Q Ease Banking"
+    python -m uvicorn main:app --reload --port 9000
+
+  TERMINAL 2 — Frontend:
+    cd "d:\Q Ease Banking\frontend"
+    npm run dev
+
+  Then open: http://localhost:5173
+
+  Keep both terminals open. Closing them stops the servers.
+
+================================================================================
+  END OF FLOW GUIDE — BankQ v1.0
+================================================================================

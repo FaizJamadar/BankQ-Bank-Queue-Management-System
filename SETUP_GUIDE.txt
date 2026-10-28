@@ -1,0 +1,201 @@
+
+================================================================================
+  BANKQ — SETUP GUIDE FOR NEW MACHINE
+================================================================================
+
+This guide sets up BankQ from scratch on any Windows machine.
+Follow every step in order. Do not skip any step.
+
+--------------------------------------------------------------------------------
+STEP 1 — INSTALL REQUIRED SOFTWARE
+--------------------------------------------------------------------------------
+
+You need 3 things installed before anything else:
+
+  1. Python 3.11 or higher
+     Download: https://www.python.org/downloads/
+     During install: CHECK the box "Add Python to PATH"
+     Verify: open Command Prompt and type:  python --version
+
+  2. Node.js (v18 or higher)
+     Download: https://nodejs.org/  (download the LTS version)
+     Verify: open Command Prompt and type:  node --version
+
+  3. MySQL 8.x
+     Download: https://dev.mysql.com/downloads/installer/
+     Choose "MySQL Community Server"
+     During install: set root password to anything you remember
+     Also install "MySQL Workbench" from the same installer
+
+--------------------------------------------------------------------------------
+STEP 2 — GET THE PROJECT FILES
+--------------------------------------------------------------------------------
+
+  Option A — If shared as a ZIP file:
+    1. Extract the ZIP to any folder e.g. C:\Projects\Q Ease Banking
+    2. Remember this folder path
+
+  Option B — If shared via USB or Google Drive:
+    1. Copy the entire "Q Ease Banking" folder to your machine
+    2. Remember where you put it
+
+  The folder should look like this:
+    Q Ease Banking/
+    ├── frontend/
+    ├── auth.py
+    ├── database.py
+    ├── main.py
+    ├── models.py
+    ├── requirements.txt
+    └── seed.py
+
+--------------------------------------------------------------------------------
+STEP 3 — CREATE THE DATABASE
+--------------------------------------------------------------------------------
+
+  1. Open MySQL Workbench
+  2. Click on your connection (Local instance MySQL80)
+  3. Enter your root password when asked
+  4. In the Query tab, type this and click the lightning bolt (Run) button:
+
+       CREATE DATABASE bankq CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+  5. You should see "1 row affected" — database is created
+
+  6. Now run this to fix the auth method for Python:
+
+       ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YourPassword';
+       FLUSH PRIVILEGES;
+
+     Replace YourPassword with your actual MySQL root password.
+
+--------------------------------------------------------------------------------
+STEP 4 — CONFIGURE DATABASE CONNECTION
+--------------------------------------------------------------------------------
+
+  1. Open the file:  Q Ease Banking/database.py
+  2. Find this line:
+       DATABASE_URL = "mysql+pymysql://root:system@localhost:3306/bankq"
+  3. Replace "system" with YOUR MySQL root password
+  4. Save the file
+
+  Example: if your password is "mypass123":
+       DATABASE_URL = "mysql+pymysql://root:mypass123@localhost:3306/bankq"
+
+--------------------------------------------------------------------------------
+STEP 5 — INSTALL PYTHON DEPENDENCIES
+--------------------------------------------------------------------------------
+
+  1. Open Command Prompt (press Win key, type cmd, press Enter)
+  2. Navigate to the project folder:
+       cd "C:\Projects\Q Ease Banking"
+       (change the path to wherever you put the folder)
+  3. Run:
+       pip install -r requirements.txt
+  4. Also run:
+       pip install cryptography bcrypt==4.0.1
+  5. Wait for all packages to install (takes 1-2 minutes)
+
+--------------------------------------------------------------------------------
+STEP 6 — CREATE TABLES AND SEED DATA
+--------------------------------------------------------------------------------
+
+  Still in the same Command Prompt window, run:
+
+    python seed.py
+
+  You should see:
+    Branches inserted
+    Services inserted
+    Counters inserted
+    Users inserted
+    Appointments inserted
+
+  This creates all database tables and fills them with test data.
+
+--------------------------------------------------------------------------------
+STEP 7 — INSTALL FRONTEND DEPENDENCIES
+--------------------------------------------------------------------------------
+
+  1. In Command Prompt, navigate to the frontend folder:
+       cd "C:\Projects\Q Ease Banking\frontend"
+  2. Run:
+       npm install
+  3. Wait for it to finish (takes 1-2 minutes)
+
+--------------------------------------------------------------------------------
+STEP 8 — RUN THE APPLICATION
+--------------------------------------------------------------------------------
+
+  You need TWO Command Prompt windows open at the same time.
+
+  WINDOW 1 — Backend:
+    cd "C:\Projects\Q Ease Banking"
+    python -m uvicorn main:app --reload --port 9000
+
+    Wait until you see:  Application startup complete.
+
+  WINDOW 2 — Frontend:
+    cd "C:\Projects\Q Ease Banking\frontend"
+    npm run dev
+
+    Wait until you see:  Local: http://localhost:5173
+
+  Keep BOTH windows open. Closing them stops the app.
+
+--------------------------------------------------------------------------------
+STEP 9 — OPEN IN BROWSER
+--------------------------------------------------------------------------------
+
+  Open any browser (Chrome, Edge, Firefox) and go to:
+
+    http://localhost:5173
+
+  You should see the BankQ login page.
+
+--------------------------------------------------------------------------------
+TEST CREDENTIALS
+--------------------------------------------------------------------------------
+
+  Role        Phone         Password
+  --------    ----------    -------------
+  CUSTOMER    9876543210    Customer@123
+  CUSTOMER    9876543211    Customer@123
+  TELLER      9000000002    Teller@123
+  SECURITY    9000000004    Security@123
+  ADMIN       9000000001    Admin@123
+
+  See FLOW_GUIDE.txt for the complete walkthrough of how to use the app.
+
+--------------------------------------------------------------------------------
+TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+  ERROR: "Access denied for user root"
+  → Your MySQL password in database.py is wrong
+  → Double check Step 4 and make sure the password matches exactly
+
+  ERROR: "No module named fastapi" or similar
+  → Python packages not installed
+  → Redo Step 5
+
+  ERROR: Port already in use / WinError 10013
+  → Port 9000 is taken by another program
+  → Try a different port: python -m uvicorn main:app --reload --port 9001
+  → Also update frontend/vite.config.js: change 9000 to 9001
+
+  ERROR: "npm not found"
+  → Node.js not installed or not added to PATH
+  → Reinstall Node.js from https://nodejs.org/ and restart Command Prompt
+
+  ERROR: Site can't be reached at localhost:5173
+  → Frontend server is not running
+  → Make sure Window 2 (npm run dev) is still open and running
+
+  ERROR: "Tables don't exist" or DB errors on startup
+  → Run seed.py again: python seed.py
+  → Make sure the bankq database was created in Step 3
+
+================================================================================
+  END OF SETUP GUIDE
+================================================================================

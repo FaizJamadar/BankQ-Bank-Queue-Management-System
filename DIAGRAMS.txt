@@ -1,0 +1,853 @@
+================================================================================
+  BANKQ — COMPLETE DIAGRAMS DOCUMENT
+  DFD Level 0, Level 1, Level 2 | ERD | UML Class | Use Case |
+  State Machine | Sequence Diagrams
+================================================================================
+
+
+================================================================================
+  SECTION 1 — DATA FLOW DIAGRAMS (DFD)
+================================================================================
+
+--------------------------------------------------------------------------------
+  DFD LEVEL 0 — CONTEXT DIAGRAM
+--------------------------------------------------------------------------------
+
+  A context diagram shows the entire system as a single process and all
+  external entities that interact with it.
+
+  EXTERNAL ENTITIES:
+    [CUSTOMER]   [TELLER]   [SECURITY]   [ADMIN]
+
+
+                    booking details (branch, service, date, slot)
+  [CUSTOMER] ─────────────────────────────────────────────────────► (0)
+                    token number + QR hash                           BankQ
+  [CUSTOMER] ◄─────────────────────────────────────────────────────  System
+                    live queue status + estimated wait time
+  [CUSTOMER] ◄─────────────────────────────────────────────────────
+
+                    QR hash scan input
+  [SECURITY] ─────────────────────────────────────────────────────►
+                    check-in confirmation + token number
+  [SECURITY] ◄─────────────────────────────────────────────────────
+
+                    branch ID + counter ID (call next request)
+  [TELLER]   ─────────────────────────────────────────────────────►
+                    next token number + counter assignment
+  [TELLER]   ◄─────────────────────────────────────────────────────
+                    appointment ID (complete request)
+  [TELLER]   ─────────────────────────────────────────────────────►
+                    completion confirmation
+  [TELLER]   ◄─────────────────────────────────────────────────────
+
+                    all of the above (full access)
+  [ADMIN]    ◄────────────────────────────────────────────────────►
+
+                              (0) BankQ System
+                                      │
+                                      │ read / write
+                                      ▼
+                              [ MySQL Database ]
+
+
+--------------------------------------------------------------------------------
+  DFD LEVEL 1 — MAIN PROCESSES
+--------------------------------------------------------------------------------
+
+  Level 1 breaks the single system bubble into 6 main processes.
+
+  EXTERNAL ENTITIES:  [CUSTOMER]  [TELLER]  [SECURITY]  [ADMIN]
+
+  DATA STORES:
+    D1  users          — user credentials and role data
+    D2  appointments   — all booking records and status
+    D3  branches       — branch config and lunch hours
+    D4  services       — service catalogue and token prefix
+    D5  counters       — counter and teller assignments
+
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 1.0 — AUTHENTICATE USER                                        │
+  │                                                                         │
+  │  Input  : phone_number + password  from [CUSTOMER/TELLER/SECURITY/ADMIN]│
+  │  Read   : D1 users (fetch password_hash by phone_number)                │
+  │  Process: bcrypt.verify(password, hash) → generate JWT token            │
+  │  Output : Bearer JWT token → to requesting user                         │
+  └─────────────────────────────────────────────────────────────────────────┘
+                │
+                │ JWT token (used in all subsequent processes)
+                ▼
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.0 — BOOK APPOINTMENT                    [CUSTOMER]           │
+  │                                                                         │
+  │  Input  : branch_id, service_id, booking_date, slot_start_time,        │
+  │           deposit_amount (optional), pan_number (conditional)           │
+  │  Read   : D3 branches (validate branch, check lunch hours)              │
+  │  Read   : D4 services (get service_code_prefix)                         │
+  │  Read   : D2 appointments (double-booking check)                        │
+  │  Process: validate PAN if deposit > 50000                               │
+  │           generate token = prefix + sequential number                   │
+  │           generate qr_hash = SHA256(customer+branch+slot+date)          │
+  │  Write  : D2 appointments (new record, status = BOOKED)                 │
+  │  Output : token_number + qr_hash → [CUSTOMER]                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+                │
+                │ qr_hash delivered to customer
+                ▼
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 3.0 — KIOSK VERIFY (CHECK-IN)             [SECURITY]          │
+  │                                                                         │
+  │  Input  : qr_hash (scanned at branch entrance)                         │
+  │  Read   : D2 appointments (lookup by qr_hash)                          │
+  │  Process: validate status == BOOKED (reject if already checked in)      │
+  │           update status = CHECKED_IN                                    │
+  │  Write  : D2 appointments (status updated)                              │
+  │  Output : confirmation + token_number → [SECURITY]                     │
+  │  Trigger: broadcast CHECKED_IN event via WebSocket to all branch viewers│
+  └─────────────────────────────────────────────────────────────────────────┘
+                │
+                │ CHECKED_IN event broadcast
+                ▼
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 4.0 — CALL NEXT TOKEN                     [TELLER]             │
+  │                                                                         │
+  │  Input  : branch_id + counter_id                                       │
+  │  Read   : D5 counters (validate counter belongs to branch)              │
+  │  Read   : D2 appointments (oldest CHECKED_IN by slot_time + appt_id)   │
+  │  Process: assign counter_id to appointment                              │
+  │           update status = IN_PROGRESS                                   │
+  │  Write  : D2 appointments (status + counter_id updated)                 │
+  │  Output : token_number + counter_number → [TELLER]                     │
+  │  Trigger: broadcast CALLED event via WebSocket to all branch viewers    │
+  └─────────────────────────────────────────────────────────────────────────┘
+                │
+                │ IN_PROGRESS event broadcast
+                ▼
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 5.0 — COMPLETE TOKEN                      [TELLER]             │
+  │                                                                         │
+  │  Input  : appointment_id                                               │
+  │  Read   : D2 appointments (validate status == IN_PROGRESS)             │
+  │  Process: update status = COMPLETED                                     │
+  │  Write  : D2 appointments (status updated)                              │
+  │  Output : confirmation + token_number → [TELLER]                       │
+  │  Trigger: broadcast COMPLETED event via WebSocket to all branch viewers │
+  └─────────────────────────────────────────────────────────────────────────┘
+                │
+                │ COMPLETED event broadcast
+                ▼
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 6.0 — LIVE QUEUE BROADCAST                [ALL USERS]          │
+  │                                                                         │
+  │  Input  : branch_id (WebSocket subscription from client)               │
+  │  Process: ConnectionManager maintains dict[branch_id → [WebSocket]]    │
+  │           Processes 3, 4, 5 trigger broadcast() on status change       │
+  │  Output : JSON event pushed to all connected clients of that branch     │
+  │           { event, token, counter, appointment_id }                    │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+  DFD LEVEL 2 — PROCESS 2.0 BOOK APPOINTMENT (EXPLODED)
+--------------------------------------------------------------------------------
+
+  This explodes Process 2.0 into its internal sub-processes.
+
+  Input from [CUSTOMER]: branch_id, service_id, date, slot, deposit, pan
+
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.1 — VALIDATE JWT & ROLE                                   │
+  │  Input  : Bearer token from request header                           │
+  │  Process: jwt.decode → extract user_id and role                      │
+  │  Read   : D1 users (confirm user exists)                             │
+  │  Output : authenticated customer object                              │
+  │  Error  : 401 Unauthorized if token invalid or expired               │
+  └──────────────────────────────────────────────────────────────────────┘
+                │ authenticated customer
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.2 — CHECK DOUBLE BOOKING                                  │
+  │  Input  : customer_id, branch_id, booking_date, slot_start_time      │
+  │  Read   : D2 appointments                                            │
+  │  Process: query for same customer+branch+date+slot where             │
+  │           status NOT IN (CANCELLED)                                  │
+  │  Output : conflict flag                                              │
+  │  Error  : 409 Conflict if slot already booked                        │
+  └──────────────────────────────────────────────────────────────────────┘
+                │ no conflict confirmed
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.3 — VALIDATE BRANCH & LUNCH HOURS                         │
+  │  Input  : branch_id, slot_start_time                                 │
+  │  Read   : D3 branches (lunch_start_time, lunch_end_time)             │
+  │  Process: check slot_start_time NOT between lunch_start and lunch_end │
+  │  Output : branch object                                              │
+  │  Error  : 400 Bad Request if slot falls in lunch break               │
+  └──────────────────────────────────────────────────────────────────────┘
+                │ branch validated
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.4 — VALIDATE PAN (CONDITIONAL)                            │
+  │  Input  : deposit_amount, pan_number                                 │
+  │  Process: if deposit_amount > 50000:                                 │
+  │             validate pan_number matches ^[A-Z]{5}[0-9]{4}[A-Z]$     │
+  │  Output : validated pan or None                                      │
+  │  Error  : 422 Validation Error if PAN missing or invalid format      │
+  └──────────────────────────────────────────────────────────────────────┘
+                │ PAN validated
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.5 — GENERATE TOKEN NUMBER                                 │
+  │  Input  : service_code_prefix, branch_id, booking_date               │
+  │  Read   : D2 appointments (COUNT tokens with same prefix+branch+date) │
+  │  Process: token = prefix + "-" + (100 + count + 1)                  │
+  │  Output : token_number e.g. C-101                                    │
+  └──────────────────────────────────────────────────────────────────────┘
+                │ token_number
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.6 — GENERATE QR HASH                                      │
+  │  Input  : customer_id, branch_id, slot_start_time, booking_date      │
+  │  Process: raw = "{customer_id}-{branch_id}-{slot}-{date}"            │
+  │           qr_hash = SHA256(raw).hexdigest()  → 64 char hex string    │
+  │  Output : qr_hash (unique per booking)                               │
+  └──────────────────────────────────────────────────────────────────────┘
+                │ qr_hash
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 2.7 — SAVE APPOINTMENT                                      │
+  │  Input  : all validated fields + token + qr_hash                    │
+  │  Write  : D2 appointments (INSERT new record, status = BOOKED)       │
+  │  Output : appointment_id + token_number + qr_hash → [CUSTOMER]      │
+  └──────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+  DFD LEVEL 2 — PROCESS 3.0 KIOSK VERIFY (EXPLODED)
+--------------------------------------------------------------------------------
+
+  Input from [SECURITY]: qr_hash
+
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 3.1 — VALIDATE JWT & SECURITY ROLE                          │
+  │  Input  : Bearer token                                               │
+  │  Process: decode JWT → confirm role is SECURITY or ADMIN             │
+  │  Error  : 403 Forbidden if role is CUSTOMER or TELLER                │
+  └──────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 3.2 — LOOKUP APPOINTMENT BY QR HASH                         │
+  │  Input  : qr_hash                                                    │
+  │  Read   : D2 appointments (WHERE qr_hash = input)                    │
+  │  Output : appointment record                                         │
+  │  Error  : 404 Not Found if no matching qr_hash                       │
+  └──────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 3.3 — VALIDATE STATUS IS BOOKED                             │
+  │  Input  : appointment.status                                         │
+  │  Process: confirm status == BOOKED                                   │
+  │  Error  : 400 Bad Request if already CHECKED_IN, IN_PROGRESS etc.    │
+  └──────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 3.4 — UPDATE STATUS AND BROADCAST                           │
+  │  Write  : D2 appointments (status = CHECKED_IN)                      │
+  │  Trigger: WebSocket broadcast to all clients on branch_id            │
+  │           { event: CHECKED_IN, token, appointment_id }               │
+  │  Output : success message + token_number → [SECURITY]               │
+  └──────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+  DFD LEVEL 2 — PROCESS 4.0 CALL NEXT TOKEN (EXPLODED)
+--------------------------------------------------------------------------------
+
+  Input from [TELLER]: branch_id, counter_id
+
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 4.1 — VALIDATE JWT & TELLER ROLE                            │
+  │  Input  : Bearer token                                               │
+  │  Process: decode JWT → confirm role is TELLER or ADMIN               │
+  └──────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 4.2 — VALIDATE COUNTER                                      │
+  │  Input  : counter_id, branch_id                                      │
+  │  Read   : D5 counters (confirm counter belongs to branch)            │
+  │  Error  : 404 Not Found if counter not in branch                     │
+  └──────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 4.3 — FETCH NEXT CHECKED_IN APPOINTMENT                     │
+  │  Read   : D2 appointments                                            │
+  │           WHERE branch_id = input AND status = CHECKED_IN            │
+  │           ORDER BY slot_start_time ASC, appointment_id ASC           │
+  │           LIMIT 1                                                    │
+  │  Error  : 404 Not Found if no customers waiting                      │
+  └──────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  PROCESS 4.4 — ASSIGN COUNTER AND BROADCAST                          │
+  │  Write  : D2 appointments (status = IN_PROGRESS, counter_id = input) │
+  │  Trigger: WebSocket broadcast to all clients on branch_id            │
+  │           { event: CALLED, token, counter, appointment_id }          │
+  │  Output : token_number + counter_number → [TELLER]                  │
+  └──────────────────────────────────────────────────────────────────────┘
+
+
+
+================================================================================
+  SECTION 2 — ENTITY RELATIONSHIP DIAGRAM (ERD)
+================================================================================
+
+  NOTATION USED:
+    PK  = Primary Key
+    FK  = Foreign Key
+    UQ  = Unique
+    NN  = Not Null
+    ||  = one (mandatory)
+    |o  = one (optional)
+    {   = many
+
+  ┌─────────────────────┐
+  │       USERS         │
+  ├─────────────────────┤
+  │ PK  user_id    INT  │
+  │ NN  full_name  VC100│
+  │ UQ  phone_num  VC15 │
+  │ NN  pass_hash  VC255│
+  │ NN  role       ENUM │
+  │     (CUSTOMER,      │
+  │      TELLER,        │
+  │      SECURITY,      │
+  │      ADMIN)         │
+  └──────────┬──────────┘
+             │ 1
+             │ (customer_id)
+             │                        ┌─────────────────────┐
+             │                        │      BRANCHES        │
+             │                        ├─────────────────────┤
+             │                        │ PK  branch_id   INT  │
+             │                        │ NN  branch_name VC100│
+             │                        │ NN  city        VC50 │
+             │                        │     lunch_start TIME │
+             │                        │     lunch_end   TIME │
+             │                        └──────┬──────────┬────┘
+             │                               │ 1        │ 1
+             │                               │          │
+             │ N                             │ N        │ N
+  ┌──────────┴──────────────────────────────┴──────────┴────────────────────┐
+  │                          APPOINTMENTS                                    │
+  ├──────────────────────────────────────────────────────────────────────────┤
+  │ PK  appointment_id   INT                                                 │
+  │ NN  token_number     VARCHAR(20)    e.g. C-101                           │
+  │ FK  customer_id      INT  → users.user_id                                │
+  │ FK  branch_id        INT  → branches.branch_id                           │
+  │ FK  service_id       INT  → services.service_id                          │
+  │ FK  counter_id       INT  → counters.counter_id  (nullable)              │
+  │ NN  booking_date     DATE                                                │
+  │ NN  slot_start_time  TIME                                                │
+  │     deposit_amount   DECIMAL(12,2)  (nullable)                           │
+  │ UQ  qr_hash          VARCHAR(64)    SHA-256 hash                         │
+  │     pan_number       VARCHAR(10)    (nullable, required if dep > 50000)  │
+  │ NN  status           ENUM                                                │
+  │     (BOOKED, CHECKED_IN, IN_PROGRESS, COMPLETED, CANCELLED)             │
+  └──────────────────────────────────────────────────────────────────────────┘
+             │ N                             │ N        │ N
+             │                               │          │
+             │ 1                             │ 1        │ 1
+  ┌──────────┴──────────┐         ┌──────────┴──┐  ┌───┴─────────────────┐
+  │      SERVICES       │         │   COUNTERS  │  │  (back to BRANCHES) │
+  ├─────────────────────┤         ├─────────────┤  └─────────────────────┘
+  │ PK  service_id  INT │         │ PK counter_id INT
+  │ NN  service_name    │         │ FK branch_id  INT → branches.branch_id
+  │     VARCHAR(100)    │         │ NN counter_num INT
+  │ NN  code_prefix     │         │ FK teller_id  INT → users.user_id (null)
+  │     VARCHAR(5)      │         └─────────────┘
+  │ NN  avg_duration INT│
+  └─────────────────────┘
+
+  RELATIONSHIPS SUMMARY:
+  ┌──────────────┬──────────────┬──────────────┬────────────────────────────┐
+  │ Entity A     │ Cardinality  │ Entity B     │ Description                │
+  ├──────────────┼──────────────┼──────────────┼────────────────────────────┤
+  │ users        │ 1 ──────── N │ appointments │ One customer, many bookings│
+  │ branches     │ 1 ──────── N │ appointments │ One branch, many bookings  │
+  │ services     │ 1 ──────── N │ appointments │ One service, many bookings │
+  │ counters     │ 1 ──────── N │ appointments │ One counter, many tokens   │
+  │ branches     │ 1 ──────── N │ counters     │ One branch, many counters  │
+  │ users        │ 1 ──────── N │ counters     │ One teller, many counters  │
+  └──────────────┴──────────────┴──────────────┴────────────────────────────┘
+
+
+================================================================================
+  SECTION 3 — UML CLASS DIAGRAM
+================================================================================
+
+  ┌─────────────────────────────────┐
+  │          <<enumeration>>        │
+  │            RoleEnum             │
+  ├─────────────────────────────────┤
+  │ + CUSTOMER                      │
+  │ + TELLER                        │
+  │ + SECURITY                      │
+  │ + ADMIN                         │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │          <<enumeration>>        │
+  │           StatusEnum            │
+  ├─────────────────────────────────┤
+  │ + BOOKED                        │
+  │ + CHECKED_IN                    │
+  │ + IN_PROGRESS                   │
+  │ + COMPLETED                     │
+  │ + CANCELLED                     │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │             User                │
+  ├─────────────────────────────────┤
+  │ + user_id       : int (PK)      │
+  │ + full_name     : str           │
+  │ + phone_number  : str (UQ)      │
+  │ + password_hash : str           │
+  │ + role          : RoleEnum      │
+  └─────────────────────────────────┘
+           △                △
+           │ role=CUSTOMER  │ role=TELLER
+           │                │
+  ┌────────┴──────┐  ┌──────┴────────────────┐
+  │  (books)      │  │  (assigned to counter) │
+  │  Appointment  │  │  Counter               │
+  └───────────────┘  └────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │            Branch               │
+  ├─────────────────────────────────┤
+  │ + branch_id        : int (PK)   │
+  │ + branch_name      : str        │
+  │ + city             : str        │
+  │ + lunch_start_time : time       │
+  │ + lunch_end_time   : time       │
+  ├─────────────────────────────────┤
+  │ + counters     : List[Counter]  │
+  │ + appointments : List[Appt]     │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │            Service              │
+  ├─────────────────────────────────┤
+  │ + service_id          : int(PK) │
+  │ + service_name        : str     │
+  │ + service_code_prefix : str     │
+  │ + avg_duration_minutes: int     │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │            Counter              │
+  ├─────────────────────────────────┤
+  │ + counter_id        : int (PK)  │
+  │ + branch_id         : int (FK)  │
+  │ + counter_number    : int       │
+  │ + assigned_teller_id: int (FK)  │
+  ├─────────────────────────────────┤
+  │ + branch  : Branch              │
+  │ + teller  : User                │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │          Appointment            │
+  ├─────────────────────────────────┤
+  │ + appointment_id  : int (PK)    │
+  │ + token_number    : str         │
+  │ + customer_id     : int (FK)    │
+  │ + branch_id       : int (FK)    │
+  │ + service_id      : int (FK)    │
+  │ + counter_id      : int (FK)    │
+  │ + booking_date    : date        │
+  │ + slot_start_time : time        │
+  │ + deposit_amount  : Decimal     │
+  │ + qr_hash         : str (UQ)    │
+  │ + pan_number      : str         │
+  │ + status          : StatusEnum  │
+  ├─────────────────────────────────┤
+  │ + customer : User               │
+  │ + branch   : Branch             │
+  │ + service  : Service            │
+  │ + counter  : Counter            │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐
+  │       ConnectionManager         │
+  ├─────────────────────────────────┤
+  │ - active : dict[int, [WS]]      │
+  ├─────────────────────────────────┤
+  │ + connect(branch_id, ws)        │
+  │ + disconnect(branch_id, ws)     │
+  │ + broadcast(branch_id, msg)     │
+  └─────────────────────────────────┘
+
+  ┌─────────────────────────────────┐       ┌─────────────────────────────┐
+  │          AuthModule             │       │         MainApp             │
+  ├─────────────────────────────────┤       ├─────────────────────────────┤
+  │ + register(req) : dict          │       │ + book_appointment() : dict │
+  │ + login(form)   : token         │       │ + kiosk_verify()    : dict  │
+  │ + get_current_user() : User     │       │ + call_next()       : dict  │
+  │ + require_role(*roles)          │       │ + complete_token()  : dict  │
+  │ + create_token(data) : str      │       │ + queue_websocket() : void  │
+  │ + hash_password(pw)  : str      │       │ + get_branches()    : list  │
+  │ + verify_password()  : bool     │       │ + get_services()    : list  │
+  └─────────────────────────────────┘       │ + get_counters()    : list  │
+                                            └─────────────────────────────┘
+
+  CLASS RELATIONSHIPS:
+    Appointment  *──────1  User      (customer_id → user_id)
+    Appointment  *──────1  Branch    (branch_id → branch_id)
+    Appointment  *──────1  Service   (service_id → service_id)
+    Appointment  *──────1  Counter   (counter_id → counter_id, optional)
+    Counter      *──────1  Branch    (branch_id → branch_id)
+    Counter      *──────1  User      (assigned_teller_id → user_id, optional)
+    MainApp      ───uses── ConnectionManager
+    MainApp      ───uses── AuthModule
+    AuthModule   ───reads─ User
+
+
+================================================================================
+  SECTION 4 — USE CASE DIAGRAM
+================================================================================
+
+  ACTORS:  Customer  |  Teller  |  Security  |  Admin (inherits all)
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │                         BankQ System                                    │
+  │                                                                         │
+  │  ┌──────────────────────────────────────────────────────────────────┐  │
+  │  │  <<use case>>  Register Account                                  │  │
+  │  │  <<use case>>  Login                                             │  │
+  │  └──────────────────────────────────────────────────────────────────┘  │
+  │           ▲ (Customer, Teller, Security, Admin)                         │
+  │                                                                         │
+  │  ┌──────────────────────────────────────────────────────────────────┐  │
+  │  │  CUSTOMER USE CASES                                              │  │
+  │  │                                                                  │  │
+  │  │  <<use case>>  Book Appointment Slot                             │  │
+  │  │    <<include>> Validate Branch and Lunch Hours                   │  │
+  │  │    <<include>> Check Double Booking                              │  │
+  │  │    <<extend>>  Enter PAN Number (if deposit > 50000)             │  │
+  │  │    <<include>> Generate Token Number                             │  │
+  │  │    <<include>> Generate QR Hash                                  │  │
+  │  │                                                                  │  │
+  │  │  <<use case>>  View Live Queue Tracker                           │  │
+  │  │    <<include>> Connect to WebSocket                              │  │
+  │  │    <<include>> View QR Code                                      │  │
+  │  │    <<include>> View Estimated Wait Time                          │  │
+  │  └──────────────────────────────────────────────────────────────────┘  │
+  │           ▲ Customer                                                    │
+  │                                                                         │
+  │  ┌──────────────────────────────────────────────────────────────────┐  │
+  │  │  SECURITY USE CASES                                              │  │
+  │  │                                                                  │  │
+  │  │  <<use case>>  Verify QR Code at Kiosk                          │  │
+  │  │    <<include>> Lookup Appointment by QR Hash                     │  │
+  │  │    <<include>> Validate Status is BOOKED                         │  │
+  │  │    <<include>> Update Status to CHECKED_IN                       │  │
+  │  │    <<include>> Broadcast CHECKED_IN Event                        │  │
+  │  └──────────────────────────────────────────────────────────────────┘  │
+  │           ▲ Security                                                    │
+  │                                                                         │
+  │  ┌──────────────────────────────────────────────────────────────────┐  │
+  │  │  TELLER USE CASES                                                │  │
+  │  │                                                                  │  │
+  │  │  <<use case>>  Call Next Token                                   │  │
+  │  │    <<include>> Select Branch and Counter                         │  │
+  │  │    <<include>> Fetch Oldest CHECKED_IN Appointment               │  │
+  │  │    <<include>> Update Status to IN_PROGRESS                      │  │
+  │  │    <<include>> Broadcast CALLED Event                            │  │
+  │  │                                                                  │  │
+  │  │  <<use case>>  Mark Token Complete                               │  │
+  │  │    <<include>> Validate Status is IN_PROGRESS                    │  │
+  │  │    <<include>> Update Status to COMPLETED                        │  │
+  │  │    <<include>> Broadcast COMPLETED Event                         │  │
+  │  │                                                                  │  │
+  │  │  <<use case>>  Toggle Counter Active Status                      │  │
+  │  └──────────────────────────────────────────────────────────────────┘  │
+  │           ▲ Teller                                                      │
+  │                                                                         │
+  │  Admin inherits ALL use cases from Customer + Security + Teller         │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+  SECTION 5 — STATE MACHINE DIAGRAM (TOKEN LIFECYCLE)
+================================================================================
+
+  This shows all valid states and transitions for an Appointment token.
+
+                         ┌─────────────┐
+                         │   [START]   │
+                         └──────┬──────┘
+                                │ Customer submits booking
+                                ▼
+                    ┌───────────────────────┐
+                    │        BOOKED         │
+                    │  Token generated      │
+                    │  QR hash generated    │
+                    └───────┬───────┬───────┘
+                            │       │
+          Security scans QR │       │ Customer cancels
+                            │       ▼
+                            │  ┌─────────────┐
+                            │  │  CANCELLED  │
+                            │  └─────────────┘
+                            │
+                            ▼
+                    ┌───────────────────────┐
+                    │      CHECKED_IN       │
+                    │  Customer inside      │
+                    │  branch premises      │
+                    └───────────┬───────────┘
+                                │
+                                │ Teller clicks Call Next
+                                ▼
+                    ┌───────────────────────┐
+                    │      IN_PROGRESS      │
+                    │  Customer at counter  │
+                    │  Counter assigned     │
+                    └───────────┬───────────┘
+                                │
+                                │ Teller clicks Mark Complete
+                                ▼
+                    ┌───────────────────────┐
+                    │       COMPLETED       │
+                    │  Service done         │
+                    └───────────────────────┘
+                                │
+                                ▼
+                         ┌─────────────┐
+                         │    [END]    │
+                         └─────────────┘
+
+  VALID TRANSITIONS TABLE:
+  ┌──────────────┬──────────────┬──────────────────────────────────────────┐
+  │ From         │ To           │ Trigger                                  │
+  ├──────────────┼──────────────┼──────────────────────────────────────────┤
+  │ (new)        │ BOOKED       │ POST /appointments/book                  │
+  │ BOOKED       │ CHECKED_IN   │ POST /kiosk/verify                       │
+  │ BOOKED       │ CANCELLED    │ Customer cancels (future feature)        │
+  │ CHECKED_IN   │ IN_PROGRESS  │ POST /teller/call-next                   │
+  │ IN_PROGRESS  │ COMPLETED    │ POST /teller/complete                    │
+  └──────────────┴──────────────┴──────────────────────────────────────────┘
+
+  INVALID TRANSITIONS (rejected by backend):
+    CHECKED_IN  → BOOKED       (cannot un-check-in)
+    IN_PROGRESS → CHECKED_IN   (cannot go backwards)
+    COMPLETED   → anything     (terminal state)
+    CANCELLED   → anything     (terminal state)
+
+
+================================================================================
+  SECTION 6 — SEQUENCE DIAGRAMS
+================================================================================
+
+--------------------------------------------------------------------------------
+  SEQUENCE 1 — CUSTOMER BOOKS A SLOT
+--------------------------------------------------------------------------------
+
+  Customer        Frontend          Backend           Database
+     │                │                │                  │
+     │ Fill form      │                │                  │
+     │ ──────────────►│                │                  │
+     │                │ POST /auth/login│                  │
+     │                │ ──────────────►│                  │
+     │                │                │ SELECT user      │
+     │                │                │ ────────────────►│
+     │                │                │ user record      │
+     │                │                │ ◄────────────────│
+     │                │                │ bcrypt.verify()  │
+     │                │ JWT token      │                  │
+     │                │ ◄──────────────│                  │
+     │                │                │                  │
+     │ Submit booking │                │                  │
+     │ ──────────────►│                │                  │
+     │                │ POST /appointments/book            │
+     │                │ ──────────────►│                  │
+     │                │                │ SELECT (double   │
+     │                │                │ booking check)   │
+     │                │                │ ────────────────►│
+     │                │                │ no conflict      │
+     │                │                │ ◄────────────────│
+     │                │                │ SELECT branch    │
+     │                │                │ ────────────────►│
+     │                │                │ branch record    │
+     │                │                │ ◄────────────────│
+     │                │                │ validate lunch   │
+     │                │                │ validate PAN     │
+     │                │                │ generate token   │
+     │                │                │ generate qr_hash │
+     │                │                │ INSERT appt      │
+     │                │                │ ────────────────►│
+     │                │                │ appt_id          │
+     │                │                │ ◄────────────────│
+     │                │ token + qr_hash│                  │
+     │                │ ◄──────────────│                  │
+     │ Show token     │                │                  │
+     │ ◄──────────────│                │                  │
+
+
+--------------------------------------------------------------------------------
+  SEQUENCE 2 — SECURITY CHECKS IN CUSTOMER
+--------------------------------------------------------------------------------
+
+  Security        Frontend          Backend           Database      WS Clients
+     │                │                │                  │               │
+     │ Paste QR hash  │                │                  │               │
+     │ ──────────────►│                │                  │               │
+     │                │ POST /kiosk/verify                │               │
+     │                │ ──────────────►│                  │               │
+     │                │                │ SELECT appt      │               │
+     │                │                │ by qr_hash       │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ appointment      │               │
+     │                │                │ ◄────────────────│               │
+     │                │                │ check status     │               │
+     │                │                │ == BOOKED        │               │
+     │                │                │ UPDATE status    │               │
+     │                │                │ = CHECKED_IN     │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ ok               │               │
+     │                │                │ ◄────────────────│               │
+     │                │                │ broadcast event ─────────────────►
+     │                │                │ CHECKED_IN       │               │
+     │                │ success + token│                  │               │
+     │                │ ◄──────────────│                  │               │
+     │ Show ✅        │                │                  │               │
+     │ ◄──────────────│                │                  │               │
+
+
+--------------------------------------------------------------------------------
+  SEQUENCE 3 — TELLER CALLS NEXT AND COMPLETES
+--------------------------------------------------------------------------------
+
+  Teller          Frontend          Backend           Database      WS Clients
+     │                │                │                  │               │
+     │ Select branch  │                │                  │               │
+     │ + counter      │                │                  │               │
+     │ Click Call Next│                │                  │               │
+     │ ──────────────►│                │                  │               │
+     │                │ POST /teller/call-next             │               │
+     │                │ ──────────────►│                  │               │
+     │                │                │ SELECT counter   │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ counter record   │               │
+     │                │                │ ◄────────────────│               │
+     │                │                │ SELECT oldest    │               │
+     │                │                │ CHECKED_IN appt  │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ appointment      │               │
+     │                │                │ ◄────────────────│               │
+     │                │                │ UPDATE status    │               │
+     │                │                │ = IN_PROGRESS    │               │
+     │                │                │ counter_id set   │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ ok               │               │
+     │                │                │ ◄────────────────│               │
+     │                │                │ broadcast CALLED ─────────────────►
+     │                │ token + counter│                  │               │
+     │                │ ◄──────────────│                  │               │
+     │ Show C-101     │                │                  │               │
+     │ ◄──────────────│                │                  │               │
+     │                │                │                  │               │
+     │ Click Complete │                │                  │               │
+     │ ──────────────►│                │                  │               │
+     │                │ POST /teller/complete              │               │
+     │                │ ──────────────►│                  │               │
+     │                │                │ SELECT appt      │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ validate         │               │
+     │                │                │ IN_PROGRESS      │               │
+     │                │                │ UPDATE COMPLETED │               │
+     │                │                │ ────────────────►│               │
+     │                │                │ ok               │               │
+     │                │                │ ◄────────────────│               │
+     │                │                │ broadcast        │               │
+     │                │                │ COMPLETED ───────────────────────►
+     │                │ confirmation   │                  │               │
+     │                │ ◄──────────────│                  │               │
+     │ Token cleared  │                │                  │               │
+     │ ◄──────────────│                │                  │               │
+
+
+================================================================================
+  SECTION 7 — COMPONENT DIAGRAM
+================================================================================
+
+  Shows how the major software components connect to each other.
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │                         CLIENT LAYER                                    │
+  │                                                                         │
+  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐ │
+  │  │  Auth.jsx    │  │ BookSlot.jsx │  │LiveTracker   │  │ Teller     │ │
+  │  │  Login +     │  │ Slot booking │  │.jsx          │  │ Dashboard  │ │
+  │  │  Register    │  │ PAN check    │  │ WebSocket    │  │ .jsx       │ │
+  │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └─────┬──────┘ │
+  │         │                 │                  │                │        │
+  │         └─────────────────┴──────────────────┴────────────────┘        │
+  │                                    │                                    │
+  │                           AuthContext.jsx                               │
+  │                           (JWT + user state)                            │
+  │                                    │                                    │
+  │                              Axios + WS API                             │
+  └────────────────────────────────────┼────────────────────────────────────┘
+                                       │ HTTP / WebSocket
+  ┌────────────────────────────────────┼────────────────────────────────────┐
+  │                         API LAYER  │                                    │
+  │                                    ▼                                    │
+  │  ┌──────────────┐  ┌──────────────────────────────────────────────┐    │
+  │  │   auth.py    │  │                  main.py                     │    │
+  │  │              │  │                                              │    │
+  │  │  /register   │  │  /branches    /services    /counters         │    │
+  │  │  /login      │  │  /appointments/book                         │    │
+  │  │  JWT utils   │  │  /kiosk/verify                              │    │
+  │  │  role guards │  │  /teller/call-next                          │    │
+  │  └──────┬───────┘  │  /teller/complete                           │    │
+  │         │          │  /ws/queue/{branch_id}                      │    │
+  │         │          │  ConnectionManager                          │    │
+  │         │          └──────────────────────┬───────────────────────┘    │
+  │         │                                 │                            │
+  │         └─────────────────────────────────┘                            │
+  │                              │ SQLAlchemy ORM                          │
+  └──────────────────────────────┼─────────────────────────────────────────┘
+                                 │
+  ┌──────────────────────────────┼─────────────────────────────────────────┐
+  │                    DATA LAYER │                                         │
+  │                               ▼                                        │
+  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │
+  │  │   database   │  │   models.py  │  │   MySQL 8.x  │                 │
+  │  │   .py        │  │              │  │              │                 │
+  │  │  engine      │  │  User        │  │  users       │                 │
+  │  │  SessionLocal│  │  Branch      │  │  branches    │                 │
+  │  │  get_db()    │  │  Service     │  │  services    │                 │
+  │  │  Base        │  │  Counter     │  │  counters    │                 │
+  │  └──────────────┘  │  Appointment │  │  appointments│                 │
+  │                    └──────────────┘  └──────────────┘                 │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+  END OF DIAGRAMS DOCUMENT — BANKQ v1.0
+================================================================================
